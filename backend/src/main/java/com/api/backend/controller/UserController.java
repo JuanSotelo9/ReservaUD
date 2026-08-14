@@ -2,6 +2,7 @@ package com.api.backend.controller;
 
 
 
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.api.backend.model.CalificarRequest;
 import com.api.backend.model.DisponibilidadRequest;
 import com.api.backend.model.ReservarRequest;
+import com.api.backend.model.User;
 import com.api.backend.model.UserResponse;
 import com.api.backend.service.RecursoService;
 import com.api.backend.service.ReservaService;
@@ -54,12 +56,14 @@ public class UserController {
     }
 
     @GetMapping("/cancelar/{id}")
-    public String cancelarReserva(@PathVariable("id") String idReserva){
-        return reservaService.cancelarReserva(idReserva);
+    public String cancelarReserva(@PathVariable("id") String idReserva, Authentication auth){
+        User user = (User) auth.getPrincipal();
+        return reservaService.cancelarReserva(idReserva, user.getKIdusuario());
     }
 
     @PostMapping("/calificar")
-    public String calificarReserva(@RequestBody CalificarRequest calificacion){
-        return reservaService.calificarReserva(calificacion.getIdReserva(), calificacion.getCalificacion());
+    public String calificarReserva(@RequestBody CalificarRequest calificacion, Authentication auth){
+        User user = (User) auth.getPrincipal();
+        return reservaService.calificarReserva(calificacion.getIdReserva(), calificacion.getCalificacion(), user.getKIdusuario());
     }
 }

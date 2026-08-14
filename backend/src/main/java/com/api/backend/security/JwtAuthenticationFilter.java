@@ -17,6 +17,8 @@ import com.api.backend.model.Role;
 import com.api.backend.model.User;
 import com.api.backend.service.JwtService;
 
+import io.jsonwebtoken.Claims;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,9 +47,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             usuario = jwtService.getUsernameFromToken(token);
 
             if (usuario != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                Claims claims = jwtService.getAllClaims(token);
+                String roleStr = claims.get("role", String.class);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(usuario);
                 User user = (User) userDetails;
-                user.setRole(Role.ROLE_USER);
+                user.setRole(Role.valueOf(roleStr));
 
                 if (jwtService.isTokenValid(token, user)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(

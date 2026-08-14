@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.api.backend.model.User;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -19,14 +21,15 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-    private final String secretKey;
-
-    public JwtService(@Value("${JWT_SECRET}") String secretKey) {
-        this.secretKey = secretKey;
-    }
+    @Value("${jwt.secret}")
+    private String secretKey;
     
     public String getToken(UserDetails user){
-        return getToken(new HashMap<>(), user);
+        Map<String, Object> claims = new HashMap<>();
+        if (user instanceof User u) {
+            claims.put("role", u.getRole().name());
+        }
+        return getToken(claims, user);
     }
 
     private String getToken(Map<String,Object> extraClaims, UserDetails user){
@@ -45,7 +48,7 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes); 
     }
 
-    private Claims getAllClaims(String token){
+    public Claims getAllClaims(String token){
         return Jwts
             .parserBuilder()
             .setSigningKey(getKey())

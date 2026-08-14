@@ -53,10 +53,15 @@ public class ReservaService {
         return reservaRepository.findBykIdusuario(idUser);
     }
 
-    public String cancelarReserva(String idReserva){
+    public String cancelarReserva(String idReserva, Long userId){
         Optional<Reserva> reserva = reservaRepository.findById(idReserva);
-        if(reserva.isPresent()){
-            if(reserva.get().getNEstadoreserva().equals("reservado")){
+        if(reserva.isEmpty()){
+            return "reserva no existe";
+        }
+        if(!reserva.get().getKIdusuario().equals(userId)){
+            return "no autorizado";
+        }
+        if(reserva.get().getNEstadoreserva().equals("reservado")){
 
                 LocalDateTime now = LocalDateTime.now();
                 LocalDate fecha = new java.util.Date(reserva.get().getFFechareserva().getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -75,35 +80,33 @@ public class ReservaService {
             }else{
                 return "reserva no esta en estado reservado";
             }
-        }else{
-            return "reserva no existe";
-        }
 
     }
 
-    public String calificarReserva(String idReserva, int calificacion){
+    public String calificarReserva(String idReserva, int calificacion, Long userId){
         Optional<Reserva> reserva = reservaRepository.findById(idReserva);
-        if(reserva.isPresent()){
-            if(reserva.get().getNEstadoreserva().equals("finalizado")){
-                if(reserva.get().getNCalificacion() == 0){
-                    if(calificacion > 0 && calificacion <= 5){
-                        reserva.get().setNCalificacion(calificacion);
-                        reservaRepository.save(reserva.get());
-                        return "calificado";
-                    }else{
-                        return "valor invalido";
-                    }
-                    
+        if(reserva.isEmpty()){
+            return "reserva no existe";
+        }
+        if(!reserva.get().getKIdusuario().equals(userId)){
+            return "no autorizado";
+        }
+        if(reserva.get().getNEstadoreserva().equals("finalizado")){
+            if(reserva.get().getNCalificacion() == 0){
+                if(calificacion > 0 && calificacion <= 5){
+                    reserva.get().setNCalificacion(calificacion);
+                    reservaRepository.save(reserva.get());
+                    return "calificado";
                 }else{
-                    return "reserva ya calificada";
+                    return "valor invalido";
                 }
                 
             }else{
-                return "reserva no ha finalizado";
+                return "reserva ya calificada";
             }
             
         }else{
-            return "reserva no existe";
+            return "reserva no ha finalizado";
         }
         
     }

@@ -165,6 +165,7 @@ CREATE TABLE `usuario`
 	`n_usuario` VARCHAR(50) NOT NULL,
 	`n_email` VARCHAR(50) NOT NULL,
 	`n_password` VARCHAR(255) NOT NULL,
+	`n_role` VARCHAR(20) NOT NULL DEFAULT 'ROLE_USER',
 	CONSTRAINT `PK_Usuario` PRIMARY KEY (`k_idusuario` ASC)
 )
 COMMENT = 'persona que interactua con la aplicacion'
