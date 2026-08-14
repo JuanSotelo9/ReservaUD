@@ -1,7 +1,7 @@
 package com.api.backend.model;
 
-import java.sql.Date;
-import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -20,9 +20,9 @@ public class Reserva {
     @Id
     String kIdreserva;
 
-    Time fHorainicioreserva;
-    Time fHorafinalreserva;
-    Date fFechareserva;
+    LocalTime fHorainicioreserva;
+    LocalTime fHorafinalreserva;
+    LocalDate fFechareserva;
     String nEstadoreserva;
     Long kIdusuario;
     int kIdrecurso;

@@ -6,9 +6,11 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -28,10 +30,12 @@ public class SecurityConfig {
 			.authorizeHttpRequests(authRequest ->
 				authRequest
 					.requestMatchers("/auth/**").permitAll()
-					.requestMatchers("/user/**").hasRole("USER")
+					.requestMatchers("/usuarios/**").hasRole("USER")
+					.requestMatchers("/reservas/**").hasRole("USER")
 					.requestMatchers("/admin/**").hasRole("ADMIN")
 					.anyRequest().authenticated()
 					)
+				.exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint()))
 				.sessionManagement(sessionManager ->
 					sessionManager
 						.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -39,5 +43,15 @@ public class SecurityConfig {
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 				.build();
 				
+	}
+
+	@Bean
+	public AuthenticationEntryPoint authenticationEntryPoint(){
+		return (request, response, authException) -> {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			response.setContentType("application/json");
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().write("{\"message\":\"no autenticado\",\"status\":401}");
+		};
 	}
 }

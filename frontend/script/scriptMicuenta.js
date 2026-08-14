@@ -16,7 +16,7 @@ const token = localStorage.getItem('token');
 let nombreRecurso;
 
 function cancelarReserva(idReserva){
-  api.get(`/user/cancelar/${idReserva}`, {
+  api.patch(`/reservas/${idReserva}/cancelar`, null, {
     headers: {
       'Authorization' : `Bearer ${token}`
     }
@@ -65,7 +65,7 @@ async function obtenerNombre(idrecurso) {
 }
 
 document.addEventListener('DOMContentLoaded', async function() {  
-  await api.get(`/user/${userId}`, {
+  await api.get(`/usuarios/${userId}`, {
       headers: {
           'Authorization': `Bearer ${token}`
       }

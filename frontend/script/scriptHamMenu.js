@@ -27,12 +27,15 @@ document.addEventListener("DOMContentLoaded", function () {
 function obtenerTipos(tipo = "") {
   api
     .get("/tipos", {
+      params: {
+        size: 100,
+      },
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
     .then(function (response) {
-      const tipos = response.data;
+      const tipos = response.data.content;
       tipos.forEach((element) => {
         opcion =
           opcion +

@@ -1,12 +1,12 @@
 package com.api.backend.dto.request;
 
-import java.sql.Date;
-import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public record ReservaRequest(
-        Time horaInicio,
-        Time horaFinal,
-        Date dia,
+        LocalTime horaInicio,
+        LocalTime horaFinal,
+        LocalDate dia,
         Long idUsuario,
         int idRecurso) {
 }

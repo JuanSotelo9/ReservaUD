@@ -14,12 +14,15 @@ document.addEventListener('DOMContentLoaded', function() {
 // Trae y muestra los recursos en la tabla
 function obtenerRecursos(nombreRecurso = '') {
     api.get('/recursos', {
+        params: {
+            size: 100
+        },
         headers: {
             'Authorization': `Bearer ${token}`
         }
     })
     .then(function (response){
-        const recursos = response.data;
+        const recursos = response.data.content;
 
         const tableBody = document.querySelector('.table-body');
         tableBody.innerHTML = ''; // Limpiar resultados anteriores

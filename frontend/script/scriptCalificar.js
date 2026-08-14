@@ -18,11 +18,10 @@ document.querySelector('.botondecalificar').addEventListener('click', function (
     const calificacionapi = selectElement.value;
 
     const data = {
-        idReserva: idreservaparaenviar,
         calificacion: calificacionapi
     };
 
-    api.post(`/user/calificar`, data)
+    api.patch(`/reservas/${idreservaparaenviar}/calificar`, data)
         .then(function (response){
             if(response.data=='calificado'){
                 alert(`Recurso calificado correctamente`)

@@ -1,8 +1,7 @@
 package com.api.backend.controller;
 
-import java.util.List;
-import java.util.Optional;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,12 +20,12 @@ public class TipoRecursoController {
     private final TipoRecursoService tipoRecursoService;
 
     @GetMapping
-    public List<TipoRecursoResponse> getTiposRecursos(){
-        return tipoRecursoService.getTiposRecurso();
+    public Page<TipoRecursoResponse> getTiposRecursos(Pageable pageable){
+        return tipoRecursoService.getTiposRecurso(pageable);
     }
 
     @GetMapping("/{id}")
-    public Optional<TipoRecursoResponse> getTipoRecurso(@PathVariable int id){
+    public TipoRecursoResponse getTipoRecurso(@PathVariable int id){
         return tipoRecursoService.getTipoRecurso(id);
     }
 

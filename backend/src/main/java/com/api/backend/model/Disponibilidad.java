@@ -1,7 +1,7 @@
 package com.api.backend.model;
 
-import java.sql.Date;
-import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,7 +23,7 @@ public class Disponibilidad {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int kIddisponibilidad;
 
-    Time fHorainiciodisponibilidad;
-    Time fHorafinaldisponibilidad;
-    Date fDiadisponibilidad;
+    LocalTime fHorainiciodisponibilidad;
+    LocalTime fHorafinaldisponibilidad;
+    LocalDate fDiadisponibilidad;
 }

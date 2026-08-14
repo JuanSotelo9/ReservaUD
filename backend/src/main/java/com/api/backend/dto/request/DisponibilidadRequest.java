@@ -1,11 +1,11 @@
 package com.api.backend.dto.request;
 
-import java.sql.Date;
-import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public record DisponibilidadRequest(
-        Date diaDisponibilidad,
-        Time horaInicio,
-        Time horaFinal,
+        LocalDate diaDisponibilidad,
+        LocalTime horaInicio,
+        LocalTime horaFinal,
         int idRecurso) {
 }

@@ -1,9 +1,6 @@
 package com.api.backend.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -82,16 +79,13 @@ public class ReservaService {
 
         if(reserva.getNEstadoreserva().equals("reservado")){
             LocalDateTime now = LocalDateTime.now();
-            LocalDate fecha = new java.util.Date(reserva.getFFechareserva().getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            LocalTime hora = reserva.getFHorainicioreserva().toLocalTime();
-            LocalDateTime fechaHora = LocalDateTime.of(fecha, hora);
+            LocalDateTime fechaHora = LocalDateTime.of(reserva.getFFechareserva(), reserva.getFHorainicioreserva());
             if(ChronoUnit.HOURS.between(now, fechaHora) < 2){
                 throw new BusinessException("fuera de plazo");
             }
             reserva.setNEstadoreserva("cancelado");
             reservaRepository.save(reserva);
-            int idDisponibilidad = recursoService.getIdDisponibilidad(reserva.getFFechareserva(), reserva.getFHorainicioreserva());
-            recursoService.crearRecursoDisponibilidad(reserva.getKIdrecurso(), idDisponibilidad);
+            recursoService.restaurarDisponibilidad(reserva.getKIdrecurso(), reserva.getFFechareserva(), reserva.getFHorainicioreserva(), reserva.getFHorafinalreserva());
             return "cancelado";
         }
         throw new BusinessException("reserva no esta en estado reservado");

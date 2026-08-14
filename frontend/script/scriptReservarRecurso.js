@@ -45,7 +45,7 @@ function consultarDisponibilidad(horaInicio, diaDisponibilidad, fechaInput, hora
         idRecurso: idRecurso
     };
 
-    api.post('/user/disponibilidad', data, {
+    api.post('/recursos/disponibilidad', data, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
@@ -79,7 +79,7 @@ function reservarRecurso() {
         idRecurso: idRecurso
     };
 
-    api.post('/user/reservar', data, {
+    api.post('/reservas', data, {
         headers: {
             'Authorization': `Bearer ${token}`
         }

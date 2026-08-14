@@ -1,13 +1,13 @@
 package com.api.backend.dto.response;
 
-import java.sql.Date;
-import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public record ReservaResponse(
         String id,
-        Time horaInicio,
-        Time horaFinal,
-        Date fecha,
+        LocalTime horaInicio,
+        LocalTime horaFinal,
+        LocalDate fecha,
         String estado,
         Long idUsuario,
         Integer idRecurso,

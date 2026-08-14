@@ -1,0 +1,631 @@
+{
+	"info": {
+		"_postman_id": "reserva-ud-api-tests",
+		"name": "ReservaUD API",
+		"description": "Pruebas de los endpoints de la API ReservaUD. Base URL: http://localhost:8080\n\nUsuarios de prueba sembrados en la BD: admin / 123456 (ROLE_ADMIN), user / 123456 (ROLE_USER) y maria.gomez / 123456 (ROLE_USER).\n\nFlujo sugerido: 1) Login (guarda {{token}} y {{userId}}), 2) ejecutar Datos de prueba.sql, 3) consultar disponibilidad, 4) crear reserva, 5) obtener usuario (guarda {{reservaCancelarId}} y {{reservaCalificarId}} del historial), 6) cancelar o calificar.\n\nNota: la fecha {{fecha}} se calcula como manana automaticamente en las peticiones de disponibilidad y reserva.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "userId",
+			"value": ""
+		},
+		{
+			"key": "fecha",
+			"value": ""
+		},
+		{
+			"key": "reservaCancelarId",
+			"value": ""
+		},
+		{
+			"key": "reservaCalificarId",
+			"value": ""
+		}
+	],
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "1. Login usuario (devuelve token)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"pm.collectionVariables.set('token', jsonData.response);",
+									"pm.collectionVariables.set('userId', jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"usuario\": \"user\",\n    \"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login-user",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "login-user"]
+						}
+					}
+				},
+				{
+					"name": "1b. Login admin (ROLE_ADMIN)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"usuario\": \"admin\",\n    \"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login-user",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "login-user"]
+						}
+					}
+				},
+				{
+					"name": "2. Registro de usuario",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"1234567890\",\n    \"nombre\": \"Ana\",\n    \"apellido\": \"Perez\",\n    \"usuario\": \"ana.perez\",\n    \"email\": \"ana.perez@example.com\",\n    \"password\": \"Clave123!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "register"]
+						}
+					}
+				},
+				{
+					"name": "2b. Registro - error: usuario duplicado",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"9999999999\",\n    \"nombre\": \"Otro\",\n    \"apellido\": \"Usuario\",\n    \"usuario\": \"ana.perez\",\n    \"email\": \"otro@example.com\",\n    \"password\": \"Clave123!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "register"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Recursos",
+			"item": [
+				{
+					"name": "3. Listar recursos (paginado)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/recursos?page=0&size=5",
+							"host": ["{{baseUrl}}"],
+							"path": ["recursos"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "5"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "3b. Listar recursos con orden",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/recursos?page=0&size=5&sort=nombre,asc",
+							"host": ["{{baseUrl}}"],
+							"path": ["recursos"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "5"
+								},
+								{
+									"key": "sort",
+									"value": "nombre,asc"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "4. Detalle de recurso",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/recursos/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["recursos", "1"]
+						}
+					}
+				},
+				{
+					"name": "4b. Detalle recurso inexistente (404)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/recursos/99999",
+							"host": ["{{baseUrl}}"],
+							"path": ["recursos", "99999"]
+						}
+					}
+				},
+				{
+					"name": "5. Recursos por tipo",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/recursos/tipo/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["recursos", "tipo", "1"]
+						}
+					}
+				},
+				{
+					"name": "6. Consultar disponibilidad",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const hoy = new Date();",
+									"const manana = new Date(hoy);",
+									"manana.setDate(hoy.getDate() + 1);",
+									"const fecha = manana.getFullYear() + '-' + String(manana.getMonth() + 1).padStart(2, '0') + '-' + String(manana.getDate()).padStart(2, '0');",
+									"pm.collectionVariables.set('fecha', fecha);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"diaDisponibilidad\": \"{{fecha}}\",\n    \"horaInicio\": \"10:00:00\",\n    \"horaFinal\": \"11:00:00\",\n    \"idRecurso\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/recursos/disponibilidad",
+							"host": ["{{baseUrl}}"],
+							"path": ["recursos", "disponibilidad"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Tipos de recurso",
+			"item": [
+				{
+					"name": "7. Listar tipos (paginado)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/tipos?page=0&size=5",
+							"host": ["{{baseUrl}}"],
+							"path": ["tipos"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "5"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "8. Detalle de tipo",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/tipos/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["tipos", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Usuarios",
+			"item": [
+				{
+					"name": "9. Obtener usuario con historial (captura reservas por estado)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"const historial = jsonData.historial || [];",
+									"const reservado = historial.find(r => r.estado === 'reservado');",
+									"const finalizado = historial.find(r => r.estado === 'finalizado' && r.calificacion === 0);",
+									"if (reservado) { pm.collectionVariables.set('reservaCancelarId', reservado.id); }",
+									"if (finalizado) { pm.collectionVariables.set('reservaCalificarId', finalizado.id); }"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/usuarios/{{userId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["usuarios", "{{userId}}"]
+						}
+					}
+				},
+				{
+					"name": "9b. Obtener usuario de otro (403: no autorizado)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/usuarios/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["usuarios", "1"]
+						}
+					}
+				},
+				{
+					"name": "9c. Sin token (401)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/usuarios/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["usuarios", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Reservas",
+			"item": [
+				{
+					"name": "10. Crear reserva",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const hoy = new Date();",
+									"const manana = new Date(hoy);",
+									"manana.setDate(hoy.getDate() + 1);",
+									"const fecha = manana.getFullYear() + '-' + String(manana.getMonth() + 1).padStart(2, '0') + '-' + String(manana.getDate()).padStart(2, '0');",
+									"pm.collectionVariables.set('fecha', fecha);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"horaInicio\": \"14:00:00\",\n    \"horaFinal\": \"15:00:00\",\n    \"dia\": \"{{fecha}}\",\n    \"idUsuario\": 2,\n    \"idRecurso\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/reservas",
+							"host": ["{{baseUrl}}"],
+							"path": ["reservas"]
+						}
+					}
+				},
+				{
+					"name": "10b. Reservar recurso ya reservado (400)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const hoy = new Date();",
+									"const manana = new Date(hoy);",
+									"manana.setDate(hoy.getDate() + 1);",
+									"const fecha = manana.getFullYear() + '-' + String(manana.getMonth() + 1).padStart(2, '0') + '-' + String(manana.getDate()).padStart(2, '0');",
+									"pm.collectionVariables.set('fecha', fecha);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"horaInicio\": \"14:00:00\",\n    \"horaFinal\": \"15:00:00\",\n    \"dia\": \"{{fecha}}\",\n    \"idUsuario\": 2,\n    \"idRecurso\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/reservas",
+							"host": ["{{baseUrl}}"],
+							"path": ["reservas"]
+						}
+					}
+				},
+				{
+					"name": "11. Cancelar reserva (usa {{reservaCancelarId}} capturado en 9)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/reservas/{{reservaCancelarId}}/cancelar",
+							"host": ["{{baseUrl}}"],
+							"path": ["reservas", "{{reservaCancelarId}}", "cancelar"]
+						}
+					}
+				},
+				{
+					"name": "11b. Cancelar reserva inexistente (404)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/reservas/NOEXISTE/cancelar",
+							"host": ["{{baseUrl}}"],
+							"path": ["reservas", "NOEXISTE", "cancelar"]
+						}
+					}
+				},
+				{
+					"name": "12. Calificar reserva (usa {{reservaCalificarId}} capturado en 9)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"calificacion\": 5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/reservas/{{reservaCalificarId}}/calificar",
+							"host": ["{{baseUrl}}"],
+							"path": ["reservas", "{{reservaCalificarId}}", "calificar"]
+						}
+					}
+				},
+				{
+					"name": "12b. Calificar con valor invalido (400)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"calificacion\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/reservas/{{reservaCalificarId}}/calificar",
+							"host": ["{{baseUrl}}"],
+							"path": ["reservas", "{{reservaCalificarId}}", "calificar"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Documentacion (Swagger)",
+			"item": [
+				{
+					"name": "Swagger UI",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/swagger-ui.html",
+							"host": ["{{baseUrl}}"],
+							"path": ["swagger-ui.html"]
+						}
+					}
+				},
+				{
+					"name": "OpenAPI JSON",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v3/api-docs",
+							"host": ["{{baseUrl}}"],
+							"path": ["v3", "api-docs"]
+						}
+					}
+				}
+			]
+		}
+	]
+}

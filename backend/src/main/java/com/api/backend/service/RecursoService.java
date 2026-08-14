@@ -1,10 +1,15 @@
 package com.api.backend.service;
 
-import java.sql.Date;
-import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,14 +40,17 @@ public class RecursoService {
     private final ReservaRepository reservaRepository;
     private final TipoRecursoRepository tipoRecursoRepository;
 
-    public Optional<RecursoResponse> getRecurso(int id){
-        Optional<Recurso> recurso = recursoRepository.findById(id);
-        if(recurso.isPresent()){
-            return Optional.of(toResponse(recurso.get()));
-        }else{
-            return Optional.empty();
-        }
-        
+    private static final Map<String, String> SORT_FIELDS = Map.of(
+        "id", "kIdrecurso",
+        "nombre", "nNombrerecurso",
+        "descripcion", "nDescripcionrecurso",
+        "idTipoRecurso", "kIdtiporecurso"
+    );
+
+    public RecursoResponse getRecurso(int id){
+        Recurso recurso = recursoRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("recurso no existe"));
+        return toResponse(recurso);
     }
 
     public List<RecursoResponse> getRecursosByTipo(int tipoRecurso){
@@ -52,11 +60,18 @@ public class RecursoService {
             .toList();
     }
 
-    public List<RecursoResponse> getRecursos(){
-        return recursoRepository.findAll()
-            .stream()
-            .map(this::toResponse)
+    public Page<RecursoResponse> getRecursos(Pageable pageable){
+        return recursoRepository.findAll(mappedPageable(pageable)).map(this::toResponse);
+    }
+
+    private Pageable mappedPageable(Pageable pageable){
+        if(pageable.getSort().isUnsorted()){
+            return pageable;
+        }
+        List<Sort.Order> orders = pageable.getSort().stream()
+            .map(order -> order.withProperty(SORT_FIELDS.getOrDefault(order.getProperty(), order.getProperty())))
             .toList();
+        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(orders));
     }
 
     public RecursoResponse toResponse(Recurso recurso){
@@ -93,9 +108,9 @@ public class RecursoService {
     }
 
     public boolean consultarDisponibilidad(DisponibilidadRequest request){
-        if(request.horaInicio().getTime() < request.horaFinal().getTime()){
-            for(long hora = request.horaInicio().getTime(); hora < request.horaFinal().getTime(); hora= hora+3600000){
-                Disponibilidad disponibilidad = disponibilidadRepository.findByAvailability(request.diaDisponibilidad(), new Time(hora));
+        if(request.horaInicio().isBefore(request.horaFinal())){
+            for(LocalTime hora = request.horaInicio(); hora.isBefore(request.horaFinal()); hora = hora.plusHours(1)){
+                Disponibilidad disponibilidad = disponibilidadRepository.findByAvailability(request.diaDisponibilidad(), hora);
                 if(!(disponibilidad != null && poseerRepository.consultarDisponibilidad(request.idRecurso(), disponibilidad.getKIddisponibilidad()) != null)){
                     return false;
                 }
@@ -108,19 +123,22 @@ public class RecursoService {
         
     }
 
-    public int getIdDisponibilidad(Date dia, Time horaInicio){
-        return disponibilidadRepository.findByAvailability(dia, horaInicio).getKIddisponibilidad();
-    }
-
-    public void crearRecursoDisponibilidad(int idRecurso, int idDisponibilidad){
-        poseerRepository.save(new Poseer(new PoseerId(idRecurso, idDisponibilidad)));
+    @Transactional
+    public void deleteDisponibilidad(int idRecurso, LocalDate dia, LocalTime horaInicio, LocalTime horaFinal){
+        for(LocalTime hora = horaInicio; hora.isBefore(horaFinal); hora = hora.plusHours(1)){
+            Disponibilidad disponibilidad = disponibilidadRepository.findByAvailability(dia, hora);
+            poseerRepository.deleteDisponibilidad(idRecurso, disponibilidad.getKIddisponibilidad());
+        }
+        
     }
 
     @Transactional
-    public void deleteDisponibilidad(int idRecurso, Date dia, Time horaInicio, Time horaFinal){
-        for(long hora = horaInicio.getTime(); hora < horaFinal.getTime(); hora= hora+3600000){
-            Disponibilidad disponibilidad = disponibilidadRepository.findByAvailability(dia, new Time(hora));
-            poseerRepository.deleteDisponibilidad(idRecurso, disponibilidad.getKIddisponibilidad());
+    public void restaurarDisponibilidad(int idRecurso, LocalDate dia, LocalTime horaInicio, LocalTime horaFinal){
+        for(LocalTime hora = horaInicio; hora.isBefore(horaFinal); hora = hora.plusHours(1)){
+            Disponibilidad disponibilidad = disponibilidadRepository.findByAvailability(dia, hora);
+            if(disponibilidad != null && poseerRepository.consultarDisponibilidad(idRecurso, disponibilidad.getKIddisponibilidad()) == null){
+                poseerRepository.save(new Poseer(new PoseerId(idRecurso, disponibilidad.getKIddisponibilidad())));
+            }
         }
         
     }
