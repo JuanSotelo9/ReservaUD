@@ -5,9 +5,9 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.api.backend.model.Reserva;
+import com.api.backend.dto.response.ReservaResponse;
+import com.api.backend.dto.response.UserResponse;
 import com.api.backend.model.User;
-import com.api.backend.model.UserResponse;
 import com.api.backend.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class UserService {
 
     public UserResponse getUser(Long id) {
         Optional<User> user = userRepository.findById(id);
-        List<Reserva> historial = reservaService.getReservas(id);
+        List<ReservaResponse> historial = reservaService.getReservas(id);
         if(user.isPresent()){
             return new UserResponse(user.get().getKIdusuario(), user.get().getNNombre(), user.get().getNUsuario(),
             user.get().getNEmail(), historial);

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.api.backend.model.TipoRecurso;
+import com.api.backend.dto.response.TipoRecursoResponse;
 import com.api.backend.service.TipoRecursoService;
 
 import lombok.RequiredArgsConstructor;
@@ -21,12 +21,12 @@ public class TipoRecursoController {
     private final TipoRecursoService tipoRecursoService;
 
     @GetMapping
-    public List<TipoRecurso> getTiposRecursos(){
+    public List<TipoRecursoResponse> getTiposRecursos(){
         return tipoRecursoService.getTiposRecurso();
     }
 
     @GetMapping("/{id}")
-    public Optional<TipoRecurso> getTipoRecurso(@PathVariable int id){
+    public Optional<TipoRecursoResponse> getTipoRecurso(@PathVariable int id){
         return tipoRecursoService.getTipoRecurso(id);
     }
 

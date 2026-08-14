@@ -5,9 +5,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.api.backend.model.AuthResponse;
-import com.api.backend.model.LoginRequest;
-import com.api.backend.model.RegisterRequest;
+import com.api.backend.dto.request.LoginRequest;
+import com.api.backend.dto.request.RegisterRequest;
+import com.api.backend.dto.response.AuthResponse;
 import com.api.backend.model.Role;
 import com.api.backend.model.User;
 import com.api.backend.repository.UserRepository;
@@ -26,66 +26,45 @@ public class AuthService {
     public AuthResponse loginUser(LoginRequest request){
         
         try{
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsuario(), request.getPassword()));
-            User user = userRepository.findBynUsuario(request.getUsuario()).orElseThrow();
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.usuario(), request.password()));
+            User user = userRepository.findBynUsuario(request.usuario()).orElseThrow();
             String token = jwtService.getToken(user);
-            return AuthResponse.builder()
-                .response(token)
-                .id(user.getKIdusuario())
-                .build();
+            return new AuthResponse(token, user.getKIdusuario());
         }catch(Exception e){
-            return AuthResponse.builder()
-            .response("Datos Incorrectos")
-            .id(null)
-            .build(); 
+            return new AuthResponse("Datos Incorrectos", null);
         }
         
     }
 
     public AuthResponse register(RegisterRequest request){
         try{
-            if(!userRepository.existsById(Long.parseLong(request.getId()))){
-                if(!userRepository.findBynUsuario(request.getUsuario()).isPresent()){
-                    if(!userRepository.findBynEmail(request.getEmail()).isPresent()){
+            if(!userRepository.existsById(Long.parseLong(request.id()))){
+                if(!userRepository.findBynUsuario(request.usuario()).isPresent()){
+                    if(!userRepository.findBynEmail(request.email()).isPresent()){
                         User user = User.builder()
-                        .kIdusuario(Long.parseLong(request.getId()))
-                        .nNombre(request.getNombre() + " " + request.getApellido())
-                        .nUsuario(request.getUsuario())
-                        .nEmail(request.getEmail())
-                        .nPassword(passwordEncoder.encode(request.getPassword()))
+                        .kIdusuario(Long.parseLong(request.id()))
+                        .nNombre(request.nombre() + " " + request.apellido())
+                        .nUsuario(request.usuario())
+                        .nEmail(request.email())
+                        .nPassword(passwordEncoder.encode(request.password()))
                         .role(Role.ROLE_USER)
                         .build();
                         userRepository.save(user);
-                        return AuthResponse.builder()
-                        .response("Success")
-                        .id(null)
-                        .build();
+                        return new AuthResponse("Success", null);
                     }else{
-                        return AuthResponse.builder()
-                        .response("correo ya registrado")
-                        .id(null)
-                        .build();
+                        return new AuthResponse("correo ya registrado", null);
                     }
                     
                 }else{
-                    return AuthResponse.builder()
-                    .response("usuario ya registrado")
-                    .id(null)
-                    .build();
+                    return new AuthResponse("usuario ya registrado", null);
                 }
                 
             }else{
-                return AuthResponse.builder()
-                .response("id ya registrado")
-                .id(null)
-                .build();
+                return new AuthResponse("id ya registrado", null);
             }
             
         }catch(Exception e){
-            return AuthResponse.builder()
-            .response("Error")
-            .id(null)
-            .build();
+            return new AuthResponse("Error", null);
 
         }
     }

@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.api.backend.model.CalificarRequest;
-import com.api.backend.model.DisponibilidadRequest;
-import com.api.backend.model.ReservarRequest;
+import com.api.backend.dto.request.CalificarRequest;
+import com.api.backend.dto.request.DisponibilidadRequest;
+import com.api.backend.dto.request.ReservaRequest;
+import com.api.backend.dto.response.UserResponse;
 import com.api.backend.model.User;
-import com.api.backend.model.UserResponse;
 import com.api.backend.service.RecursoService;
 import com.api.backend.service.ReservaService;
 import com.api.backend.service.UserService;
@@ -42,10 +42,10 @@ public class UserController {
     }
 
     @PostMapping("/reservar")
-    public boolean reservarRecurso(@RequestBody ReservarRequest request){
-        if(recursoService.consultarDisponibilidad(new DisponibilidadRequest(request.getDia(), request.getHoraInicio(), request.getHoraFinal(), request.getIdRecurso()))){
+    public boolean reservarRecurso(@RequestBody ReservaRequest request){
+        if(recursoService.consultarDisponibilidad(new DisponibilidadRequest(request.dia(), request.horaInicio(), request.horaFinal(), request.idRecurso()))){
             if(reservaService.reservarRecurso(request)){
-                recursoService.deleteDisponibilidad(request.getIdRecurso(), request.getDia(), request.getHoraInicio(), request.getHoraFinal());
+                recursoService.deleteDisponibilidad(request.idRecurso(), request.dia(), request.horaInicio(), request.horaFinal());
                 return true;
             }else{
                 return false;
@@ -64,6 +64,6 @@ public class UserController {
     @PostMapping("/calificar")
     public String calificarReserva(@RequestBody CalificarRequest calificacion, Authentication auth){
         User user = (User) auth.getPrincipal();
-        return reservaService.calificarReserva(calificacion.getIdReserva(), calificacion.getCalificacion(), user.getKIdusuario());
+        return reservaService.calificarReserva(calificacion.idReserva(), calificacion.calificacion(), user.getKIdusuario());
     }
 }

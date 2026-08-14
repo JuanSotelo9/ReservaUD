@@ -8,15 +8,18 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.api.backend.dto.request.DisponibilidadRequest;
+import com.api.backend.dto.response.RecursoResponse;
 import com.api.backend.model.Disponibilidad;
-import com.api.backend.model.DisponibilidadRequest;
 import com.api.backend.model.Poseer;
 import com.api.backend.model.PoseerId;
 import com.api.backend.model.Recurso;
+import com.api.backend.model.TipoRecurso;
 import com.api.backend.repository.DisponibilidadRepository;
 import com.api.backend.repository.PoseerRepository;
 import com.api.backend.repository.RecursoRepository;
 import com.api.backend.repository.ReservaRepository;
+import com.api.backend.repository.TipoRecursoRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,33 +31,46 @@ public class RecursoService {
     private final DisponibilidadRepository disponibilidadRepository;
     private final PoseerRepository poseerRepository;
     private final ReservaRepository reservaRepository;
+    private final TipoRecursoRepository tipoRecursoRepository;
 
-    public Optional<Recurso> getRecurso(int id){
+    public Optional<RecursoResponse> getRecurso(int id){
         Optional<Recurso> recurso = recursoRepository.findById(id);
         if(recurso.isPresent()){
-            recurso.get().setCalificacion(calificacionPromedio(id));
-            return recurso;
+            return Optional.of(toResponse(recurso.get()));
         }else{
-            return recurso;
+            return Optional.empty();
         }
         
     }
 
-    public List<Recurso> getRecursosByTipo(int tipoRecurso){
-        return recursoRepository.findBykIdtiporecurso(tipoRecurso);
+    public List<RecursoResponse> getRecursosByTipo(int tipoRecurso){
+        return recursoRepository.findBykIdtiporecurso(tipoRecurso)
+            .stream()
+            .map(this::toResponse)
+            .toList();
     }
 
-    public List<Recurso> getRecursos(){
-        List<Recurso> recursos = recursoRepository.findAll();
-        if(recursos.isEmpty()){
-            return recursos;
-        }else{
-            for(Recurso recurso : recursos){
-                recurso.setCalificacion(calificacionPromedio(recurso.getKIdrecurso()));
-            }
-            return recursos;
+    public List<RecursoResponse> getRecursos(){
+        return recursoRepository.findAll()
+            .stream()
+            .map(this::toResponse)
+            .toList();
+    }
+
+    public RecursoResponse toResponse(Recurso recurso){
+        String nombreTipoRecurso = null;
+        Optional<TipoRecurso> tipoRecurso = tipoRecursoRepository.findById(recurso.getKIdtiporecurso());
+        if(tipoRecurso.isPresent()){
+            nombreTipoRecurso = tipoRecurso.get().getNNombretiporecurso();
         }
-        
+        return new RecursoResponse(
+            recurso.getKIdrecurso(),
+            recurso.getNNombrerecurso(),
+            recurso.getNDescripcionrecurso(),
+            recurso.getKIdtiporecurso(),
+            nombreTipoRecurso,
+            calificacionPromedio(recurso.getKIdrecurso())
+        );
     }
 
     public boolean saveRecurso(Recurso recurso){
@@ -71,10 +87,10 @@ public class RecursoService {
     }
 
     public boolean consultarDisponibilidad(DisponibilidadRequest request){
-        if(request.getHoraInicio().getTime() < request.getHoraFinal().getTime()){
-            for(long hora = request.getHoraInicio().getTime(); hora < request.getHoraFinal().getTime(); hora= hora+3600000){
-                Disponibilidad disponibilidad = disponibilidadRepository.findByAvailability(request.getDiaDisponibilidad(), new Time(hora));
-                if(!(disponibilidad != null && poseerRepository.consultarDisponibilidad(request.getIdRecurso(), disponibilidad.getKIddisponibilidad()) != null)){
+        if(request.horaInicio().getTime() < request.horaFinal().getTime()){
+            for(long hora = request.horaInicio().getTime(); hora < request.horaFinal().getTime(); hora= hora+3600000){
+                Disponibilidad disponibilidad = disponibilidadRepository.findByAvailability(request.diaDisponibilidad(), new Time(hora));
+                if(!(disponibilidad != null && poseerRepository.consultarDisponibilidad(request.idRecurso(), disponibilidad.getKIddisponibilidad()) != null)){
                     return false;
                 }
             }

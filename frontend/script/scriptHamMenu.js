@@ -36,7 +36,7 @@ function obtenerTipos(tipo = "") {
       tipos.forEach((element) => {
         opcion =
           opcion +
-          `<a href="recursos.html" class="card"><img src="${element.nimagen}" class="card__img" id="${element.kidtiporecurso}"/><span class="card__footer" id="${element.kidtiporecurso}">${element.nnombretiporecurso}<span></a>`;
+          `<a href="recursos.html" class="card"><img src="${element.imagen}" class="card__img" id="${element.id}"/><span class="card__footer" id="${element.id}">${element.nombre}<span></a>`;
         document.getElementById("opciones").innerHTML = opcion;
       });
     })

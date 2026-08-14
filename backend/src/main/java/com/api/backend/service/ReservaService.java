@@ -11,8 +11,9 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.api.backend.dto.request.ReservaRequest;
+import com.api.backend.dto.response.ReservaResponse;
 import com.api.backend.model.Reserva;
-import com.api.backend.model.ReservarRequest;
 import com.api.backend.repository.ReservaRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -26,15 +27,15 @@ public class ReservaService {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
 
-    public boolean reservarRecurso(ReservarRequest request){
+    public boolean reservarRecurso(ReservaRequest request){
         Reserva reserva = new Reserva();
         reserva.setKIdreserva(this.generarId());
-        reserva.setFFechareserva(request.getDia());
-        reserva.setFHorafinalreserva(request.getHoraFinal());
-        reserva.setFHorainicioreserva(request.getHoraInicio());
+        reserva.setFFechareserva(request.dia());
+        reserva.setFHorafinalreserva(request.horaFinal());
+        reserva.setFHorainicioreserva(request.horaInicio());
         reserva.setNEstadoreserva("reservado");
-        reserva.setKIdusuario(request.getIdUsuario());
-        reserva.setKIdrecurso(request.getIdRecurso());
+        reserva.setKIdusuario(request.idUsuario());
+        reserva.setKIdrecurso(request.idRecurso());
         reserva.setNCalificacion(0);
         try {
             reservaRepository.save(reserva);
@@ -49,8 +50,24 @@ public class ReservaService {
         return now.format(formatter);
     }
 
-    public List<Reserva> getReservas(Long idUser){
-        return reservaRepository.findBykIdusuario(idUser);
+    public List<ReservaResponse> getReservas(Long idUser){
+        return reservaRepository.findBykIdusuario(idUser)
+            .stream()
+            .map(this::toResponse)
+            .toList();
+    }
+
+    public ReservaResponse toResponse(Reserva reserva){
+        return new ReservaResponse(
+            reserva.getKIdreserva(),
+            reserva.getFHorainicioreserva(),
+            reserva.getFHorafinalreserva(),
+            reserva.getFFechareserva(),
+            reserva.getNEstadoreserva(),
+            reserva.getKIdusuario(),
+            reserva.getKIdrecurso(),
+            reserva.getNCalificacion()
+        );
     }
 
     public String cancelarReserva(String idReserva, Long userId){

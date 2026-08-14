@@ -25,34 +25,34 @@ function obtenerRecursos(nombreRecurso = '') {
         tableBody.innerHTML = ''; // Limpiar resultados anteriores
 
         recursos.forEach(recurso => {
-            if(nombreRecurso && !recurso.nnombrerecurso.toLowerCase().includes(nombreRecurso.toLowerCase())) {
+            if(nombreRecurso && !recurso.nombre.toLowerCase().includes(nombreRecurso.toLowerCase())) {
                 return; // Salta este recurso si no coincide con el nombreRecurso
             }
-            if(opcion != 0 && recurso.kidtiporecurso != opcion){
+            if(opcion != 0 && recurso.idTipoRecurso != opcion){
                 return;
             }
             const row = document.createElement('tr');
 
             const idCell = document.createElement('td');
-            idCell.textContent = recurso.kidrecurso;
+            idCell.textContent = recurso.id;
             row.appendChild(idCell);
 
             const nombreCell = document.createElement('td');
-            nombreCell.textContent = recurso.nnombrerecurso;
+            nombreCell.textContent = recurso.nombre;
             row.appendChild(nombreCell);
 
             const descripcionCell = document.createElement('td');
-            descripcionCell.textContent = recurso.ndescripcionrecurso;
+            descripcionCell.textContent = recurso.descripcion;
             row.appendChild(descripcionCell);
 
             const calificacionCell = document.createElement('td');
-            calificacionCell.textContent = recurso.calificacion;
+            calificacionCell.textContent = recurso.calificacionPromedio;
             row.appendChild(calificacionCell);
             
             const opcionCell = document.createElement('td');
             const reservarButton = document.createElement('button');
             reservarButton.textContent = 'Reservar';
-            reservarButton.addEventListener('click', () => reservar(recurso.kidrecurso));
+            reservarButton.addEventListener('click', () => reservar(recurso.id));
             opcionCell.appendChild(reservarButton);
             row.appendChild(opcionCell);
 

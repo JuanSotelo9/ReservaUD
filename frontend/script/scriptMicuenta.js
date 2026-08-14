@@ -49,7 +49,7 @@ async function obtenerNombre(idrecurso) {
       }
     })
     .then(function(response) {
-      let nombreRecurso = response.data.nnombrerecurso;
+      let nombreRecurso = response.data.nombre;
       resolve(nombreRecurso);
     })
     .catch(function(error) {
@@ -85,10 +85,10 @@ document.addEventListener('DOMContentLoaded', async function() {
           const row = document.createElement('tr');
 
           const idCell = document.createElement('td');
-          idCell.textContent = elemento.kidreserva;
+          idCell.textContent = elemento.id;
           row.appendChild(idCell);
 
-          let idrecurso = Histo[flag].kidrecurso;
+          let idrecurso = Histo[flag].idRecurso;
           flag += 1;
           
           nombreRecurso = await obtenerNombre(idrecurso);
@@ -98,37 +98,37 @@ document.addEventListener('DOMContentLoaded', async function() {
           row.appendChild(nombreCell);
 
           const fechaCell = document.createElement('td');
-          fechaCell.textContent = elemento.ffechareserva;
+          fechaCell.textContent = elemento.fecha;
           row.appendChild(fechaCell);
 
           const horaICell = document.createElement('td');
-          horaICell.textContent = elemento.fhorainicioreserva;
+          horaICell.textContent = elemento.horaInicio;
           row.appendChild(horaICell);
 
           const horaFCell = document.createElement('td');
-          horaFCell.textContent = elemento.fhorafinalreserva;
+          horaFCell.textContent = elemento.horaFinal;
           row.appendChild(horaFCell);
 
           const estadoCell = document.createElement('td');
-          estadoCell.textContent = elemento.nestadoreserva;
+          estadoCell.textContent = elemento.estado;
           row.appendChild(estadoCell);
 
           const opcionCell = document.createElement('td');
-          if(elemento.ncalificacion === 0){
+          if(elemento.calificacion === 0){
             const button = document.createElement('button');
 
-            if(elemento.nestadoreserva === 'finalizado'){
+            if(elemento.estado === 'finalizado'){
               button.textContent = 'Calificar';
-              button.addEventListener('click', () => calificar(elemento.kidreserva));
+              button.addEventListener('click', () => calificar(elemento.id));
               
             }
-            if(elemento.nestadoreserva === 'reservado'){
+            if(elemento.estado === 'reservado'){
               button.textContent = "Cancelar";
-              button.addEventListener('click', () => cancelarReserva(elemento.kidreserva));
+              button.addEventListener('click', () => cancelarReserva(elemento.id));
             }
             opcionCell.appendChild(button);
           }else{
-            opcionCell.textContent = elemento.ncalificacion;
+            opcionCell.textContent = elemento.calificacion;
           }
           
           

@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.api.backend.dto.response.TipoRecursoResponse;
 import com.api.backend.model.TipoRecurso;
 import com.api.backend.repository.TipoRecursoRepository;
 
@@ -16,12 +17,24 @@ public class TipoRecursoService {
     
     private final TipoRecursoRepository tipoRecursoRepository;
 
-    public Optional<TipoRecurso> getTipoRecurso(int id){
-        return tipoRecursoRepository.findById(id);
+    public Optional<TipoRecursoResponse> getTipoRecurso(int id){
+        return tipoRecursoRepository.findById(id).map(this::toResponse);
     }
 
-    public List<TipoRecurso> getTiposRecurso(){
-        return tipoRecursoRepository.findAll();
+    public List<TipoRecursoResponse> getTiposRecurso(){
+        return tipoRecursoRepository.findAll()
+            .stream()
+            .map(this::toResponse)
+            .toList();
+    }
+
+    public TipoRecursoResponse toResponse(TipoRecurso tipoRecurso){
+        return new TipoRecursoResponse(
+            tipoRecurso.getKIdtiporecurso(),
+            tipoRecurso.getNNombretiporecurso(),
+            tipoRecurso.getNDescripciontiporecurso(),
+            tipoRecurso.getNImagen()
+        );
     }
 
     public boolean saveTipoRecurso(TipoRecurso tipoRecurso){

@@ -26,10 +26,10 @@ function obtenerRecurso() {
         const recurso = response.data;
 
         const titulo = document.getElementById('nombreProducto');
-        titulo.textContent = `${recurso.nnombrerecurso}`;
+        titulo.textContent = `${recurso.nombre}`;
 
         const info = document.getElementById('descripcionProducto');
-        info.textContent = `${recurso.ndescripcionrecurso}`;
+        info.textContent = `${recurso.descripcion}`;
     })
     .catch(function (error){
         console.error("Error al obtener datos basicos del recurso: ", error)
