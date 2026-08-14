@@ -1,4 +1,4 @@
-package com.api.backend.shedule;
+package com.api.backend.sheduled;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class SheduledTask {
+public class SheduledTasks {
 
     private final ReservaRepository reservaRepository;
     private final DisponibilidadRepository disponibilidadRepository;
