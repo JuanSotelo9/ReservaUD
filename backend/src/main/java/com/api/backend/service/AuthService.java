@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.api.backend.dto.request.LoginRequest;
 import com.api.backend.dto.request.RegisterRequest;
 import com.api.backend.dto.response.AuthResponse;
+import com.api.backend.exception.BusinessException;
+import com.api.backend.exception.UnauthorizedException;
 import com.api.backend.model.Role;
 import com.api.backend.model.User;
 import com.api.backend.repository.UserRepository;
@@ -24,48 +26,40 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public AuthResponse loginUser(LoginRequest request){
-        
         try{
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.usuario(), request.password()));
             User user = userRepository.findBynUsuario(request.usuario()).orElseThrow();
             String token = jwtService.getToken(user);
             return new AuthResponse(token, user.getKIdusuario());
         }catch(Exception e){
-            return new AuthResponse("Datos Incorrectos", null);
+            throw new UnauthorizedException("datos incorrectos");
         }
         
     }
 
     public AuthResponse register(RegisterRequest request){
+        if(userRepository.existsById(Long.parseLong(request.id()))){
+            throw new BusinessException("id ya registrado");
+        }
+        if(userRepository.findBynUsuario(request.usuario()).isPresent()){
+            throw new BusinessException("usuario ya registrado");
+        }
+        if(userRepository.findBynEmail(request.email()).isPresent()){
+            throw new BusinessException("correo ya registrado");
+        }
         try{
-            if(!userRepository.existsById(Long.parseLong(request.id()))){
-                if(!userRepository.findBynUsuario(request.usuario()).isPresent()){
-                    if(!userRepository.findBynEmail(request.email()).isPresent()){
-                        User user = User.builder()
-                        .kIdusuario(Long.parseLong(request.id()))
-                        .nNombre(request.nombre() + " " + request.apellido())
-                        .nUsuario(request.usuario())
-                        .nEmail(request.email())
-                        .nPassword(passwordEncoder.encode(request.password()))
-                        .role(Role.ROLE_USER)
-                        .build();
-                        userRepository.save(user);
-                        return new AuthResponse("Success", null);
-                    }else{
-                        return new AuthResponse("correo ya registrado", null);
-                    }
-                    
-                }else{
-                    return new AuthResponse("usuario ya registrado", null);
-                }
-                
-            }else{
-                return new AuthResponse("id ya registrado", null);
-            }
-            
+            User user = User.builder()
+            .kIdusuario(Long.parseLong(request.id()))
+            .nNombre(request.nombre() + " " + request.apellido())
+            .nUsuario(request.usuario())
+            .nEmail(request.email())
+            .nPassword(passwordEncoder.encode(request.password()))
+            .role(Role.ROLE_USER)
+            .build();
+            userRepository.save(user);
+            return new AuthResponse("Success", null);
         }catch(Exception e){
-            return new AuthResponse("Error", null);
-
+            throw new BusinessException("Error");
         }
     }
 }

@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.api.backend.dto.request.DisponibilidadRequest;
 import com.api.backend.dto.response.RecursoResponse;
+import com.api.backend.exception.BusinessException;
+import com.api.backend.exception.ResourceNotFoundException;
 import com.api.backend.model.Disponibilidad;
 import com.api.backend.model.Poseer;
 import com.api.backend.model.PoseerId;
@@ -74,16 +76,20 @@ public class RecursoService {
     }
 
     public boolean saveRecurso(Recurso recurso){
-        return recursoRepository.save(recurso) != null;    
+        try {
+            recursoRepository.save(recurso);
+            return true;
+        } catch (Exception e) {
+            throw new BusinessException("no se pudo guardar el recurso");
+        }
     }
 
     public boolean deleteRecurso(Recurso recurso){
-        if(recursoRepository.existsById(recurso.getKIdrecurso())){
-            recursoRepository.delete(recurso);
-            return true;
-        }else{
-            return false;
+        if(!recursoRepository.existsById(recurso.getKIdrecurso())){
+            throw new ResourceNotFoundException("recurso no existe");
         }
+        recursoRepository.delete(recurso);
+        return true;
     }
 
     public boolean consultarDisponibilidad(DisponibilidadRequest request){

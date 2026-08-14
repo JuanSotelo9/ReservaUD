@@ -14,6 +14,7 @@ import com.api.backend.dto.request.CalificarRequest;
 import com.api.backend.dto.request.DisponibilidadRequest;
 import com.api.backend.dto.request.ReservaRequest;
 import com.api.backend.dto.response.UserResponse;
+import com.api.backend.exception.BusinessException;
 import com.api.backend.model.User;
 import com.api.backend.service.RecursoService;
 import com.api.backend.service.ReservaService;
@@ -43,16 +44,12 @@ public class UserController {
 
     @PostMapping("/reservar")
     public boolean reservarRecurso(@RequestBody ReservaRequest request){
-        if(recursoService.consultarDisponibilidad(new DisponibilidadRequest(request.dia(), request.horaInicio(), request.horaFinal(), request.idRecurso()))){
-            if(reservaService.reservarRecurso(request)){
-                recursoService.deleteDisponibilidad(request.idRecurso(), request.dia(), request.horaInicio(), request.horaFinal());
-                return true;
-            }else{
-                return false;
-            }
-        }else{
-            return false;
+        if(!recursoService.consultarDisponibilidad(new DisponibilidadRequest(request.dia(), request.horaInicio(), request.horaFinal(), request.idRecurso()))){
+            throw new BusinessException("recurso no disponible");
         }
+        reservaService.reservarRecurso(request);
+        recursoService.deleteDisponibilidad(request.idRecurso(), request.dia(), request.horaInicio(), request.horaFinal());
+        return true;
     }
 
     @GetMapping("/cancelar/{id}")

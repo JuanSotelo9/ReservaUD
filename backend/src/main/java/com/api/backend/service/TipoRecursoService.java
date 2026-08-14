@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.api.backend.dto.response.TipoRecursoResponse;
+import com.api.backend.exception.BusinessException;
+import com.api.backend.exception.ResourceNotFoundException;
 import com.api.backend.model.TipoRecurso;
 import com.api.backend.repository.TipoRecursoRepository;
 
@@ -38,15 +40,19 @@ public class TipoRecursoService {
     }
 
     public boolean saveTipoRecurso(TipoRecurso tipoRecurso){
-        return tipoRecursoRepository.save(tipoRecurso) != null;
+        try {
+            tipoRecursoRepository.save(tipoRecurso);
+            return true;
+        } catch (Exception e) {
+            throw new BusinessException("no se pudo guardar el tipo de recurso");
+        }
     }
 
     public boolean deleteTipoRecurso(TipoRecurso tipoRecurso){
-        if(tipoRecursoRepository.existsById(tipoRecurso.getKIdtiporecurso())){
-            tipoRecursoRepository.delete(tipoRecurso);
-            return true;
-        }else{
-            return false;
+        if(!tipoRecursoRepository.existsById(tipoRecurso.getKIdtiporecurso())){
+            throw new ResourceNotFoundException("tipo de recurso no existe");
         }
+        tipoRecursoRepository.delete(tipoRecurso);
+        return true;
     }
 }

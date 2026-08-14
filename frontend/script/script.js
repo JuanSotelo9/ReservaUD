@@ -147,24 +147,9 @@ document.querySelector('.modal_close').addEventListener('click', function (e) {
             x1 = response.data.response;
             const successMessage = document.getElementById('registration-success-message');
             successMessage.style.display = 'block';
-            if(x1=='id ya registrado'){
-                successMessage.textContent = 'Cedula ya registrada.';
-                successMessage.style.color = 'red';
-            }
-            if(x1=='usuario ya registrado'){
-                successMessage.textContent = 'Usuario ya registrado.';
-                successMessage.style.color = 'red';
-            }
-            if(x1=='correo ya registrado'){
-                successMessage.textContent = 'Correo ya registrado.';
-                successMessage.style.color = 'red';
-            }
             if (x1 == "Success") {
                 successMessage.textContent = 'Registro exitoso.';
                 successMessage.style.color = 'green';
-            } else if (x1 == "Error") {
-                successMessage.textContent = 'Registro fallido.';
-                successMessage.style.color = 'red';
             }
 
             // Limpiar los campos del formulario (opcional)
@@ -176,6 +161,22 @@ document.querySelector('.modal_close').addEventListener('click', function (e) {
             document.querySelector("input[name='Contraseña']").value = '';
         })
         .catch(function (error) {
+            const msg = (error.response && error.response.data) ? error.response.data.message : '';
+            const successMessage = document.getElementById('registration-success-message');
+            successMessage.style.display = 'block';
+            successMessage.style.color = 'red';
+            if(msg == 'id ya registrado'){
+                successMessage.textContent = 'Cedula ya registrada.';
+            }
+            else if(msg == 'usuario ya registrado'){
+                successMessage.textContent = 'Usuario ya registrado.';
+            }
+            else if(msg == 'correo ya registrado'){
+                successMessage.textContent = 'Correo ya registrado.';
+            }
+            else {
+                successMessage.textContent = 'Registro fallido.';
+            }
             console.error("Error en la petición: ", error);
         });
 });
@@ -207,15 +208,11 @@ document.querySelector('.modal_close2').addEventListener('click', function (e) {
                 localStorage.setItem('token', token);
                 window.location.href = 'homeUser.html';
             }
-
-            if(x2=="Datos Incorrectos"){
-                const successMessage2 = document.getElementById('login-success-message');
-                successMessage2.style.display = 'block';
-                successMessage2.textContent = 'Usuario o contraseña incorrectos';
-            }
         })
         .catch(function (error){
-            console.error("Error en la peticion: ", error)
+            const successMessage2 = document.getElementById('login-success-message');
+            successMessage2.style.display = 'block';
+            successMessage2.textContent = 'Usuario o contraseña incorrectos';
         });
 
     // api.interceptors.request.use(config => {

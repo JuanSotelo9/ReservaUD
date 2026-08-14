@@ -22,22 +22,27 @@ function cancelarReserva(idReserva){
     }
   })
   .then(function(response){
-    if(response.data === "reserva no existe"){
-      alert("reserva no existe");
-    }
-    if(response.data === "reserva no esta en estado reservado"){
-      alert("reserva no esta en estado reservado");
-    }
-    if(response.data === "cancelado"){
-      alert("Reserva cancelada con exito");
-    }
-    if(response.data === "fuera de plazo"){
-      alert("Fuera de plazo para cancelar");
-    }
+    alert("Reserva cancelada con exito");
     window.location.href = "micuenta.html";
   })
   .catch(function(error){
-    console.error(error)
+    const msg = (error.response && error.response.data) ? error.response.data.message : 'error';
+    if(msg === "reserva no existe"){
+      alert("reserva no existe");
+    }
+    else if(msg === "reserva no esta en estado reservado"){
+      alert("reserva no esta en estado reservado");
+    }
+    else if(msg === "fuera de plazo"){
+      alert("Fuera de plazo para cancelar");
+    }
+    else if(msg === "no autorizado"){
+      alert("no autorizado");
+    }
+    else {
+      alert("Error al cancelar la reserva");
+    }
+    window.location.href = "micuenta.html";
   })
 }
 

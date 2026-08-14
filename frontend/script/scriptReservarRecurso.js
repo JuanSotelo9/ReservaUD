@@ -85,23 +85,15 @@ function reservarRecurso() {
         }
     })
     .then(function (response){
-        const estado = response.data;
-        console.log('horaInicio:', horaI);
-        console.log('horaFinal:', horaF);
-        console.log('Dia:', dia);
-        console.log('idUser:', userId);
-        console.log('idRecurso:', idRecurso);
-        console.log('Estado Reserva:', estado);
-        console.log(response);
-        if(estado) {
+        if(response.data) {
             alert('Reserva exitosa');
             window.location.href = "micuenta.html";
-        } else {
-            alert('No se pudo realizar la reserva');
         }
         flag = false;
     })
     .catch(function (error){
+        alert('No se pudo realizar la reserva');
+        flag = false;
         console.error("Error al realizar la reserva: ", error);
     });
 }

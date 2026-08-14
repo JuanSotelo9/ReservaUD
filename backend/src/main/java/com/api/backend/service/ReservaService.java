@@ -7,12 +7,14 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.api.backend.dto.request.ReservaRequest;
 import com.api.backend.dto.response.ReservaResponse;
+import com.api.backend.exception.BusinessException;
+import com.api.backend.exception.ResourceNotFoundException;
+import com.api.backend.exception.UnauthorizedException;
 import com.api.backend.model.Reserva;
 import com.api.backend.repository.ReservaRepository;
 
@@ -41,7 +43,7 @@ public class ReservaService {
             reservaRepository.save(reserva);
             return true;
         } catch (Exception e) {
-            return false;
+            throw new BusinessException("no se pudo realizar la reserva");
         }
     }
     
@@ -71,60 +73,52 @@ public class ReservaService {
     }
 
     public String cancelarReserva(String idReserva, Long userId){
-        Optional<Reserva> reserva = reservaRepository.findById(idReserva);
-        if(reserva.isEmpty()){
-            return "reserva no existe";
-        }
-        if(!reserva.get().getKIdusuario().equals(userId)){
-            return "no autorizado";
-        }
-        if(reserva.get().getNEstadoreserva().equals("reservado")){
+        Reserva reserva = reservaRepository.findById(idReserva)
+            .orElseThrow(() -> new ResourceNotFoundException("reserva no existe"));
 
-                LocalDateTime now = LocalDateTime.now();
-                LocalDate fecha = new java.util.Date(reserva.get().getFFechareserva().getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                LocalTime hora = reserva.get().getFHorainicioreserva().toLocalTime();
-                LocalDateTime fechaHora = LocalDateTime.of(fecha, hora);
-                if(ChronoUnit.HOURS.between(now, fechaHora) < 2){
-                    return "fuera de plazo";
-                }else{
-                    reserva.get().setNEstadoreserva("cancelado");
-                    reservaRepository.save(reserva.get());
-                    int idDisponibilidad = recursoService.getIdDisponibilidad(reserva.get().getFFechareserva(), reserva.get().getFHorainicioreserva());
-                    recursoService.crearRecursoDisponibilidad(reserva.get().getKIdrecurso(), idDisponibilidad);
-                    return "cancelado";
-                }
-                
-            }else{
-                return "reserva no esta en estado reservado";
+        if(!reserva.getKIdusuario().equals(userId)){
+            throw new UnauthorizedException("no autorizado");
+        }
+
+        if(reserva.getNEstadoreserva().equals("reservado")){
+            LocalDateTime now = LocalDateTime.now();
+            LocalDate fecha = new java.util.Date(reserva.getFFechareserva().getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalTime hora = reserva.getFHorainicioreserva().toLocalTime();
+            LocalDateTime fechaHora = LocalDateTime.of(fecha, hora);
+            if(ChronoUnit.HOURS.between(now, fechaHora) < 2){
+                throw new BusinessException("fuera de plazo");
             }
-
+            reserva.setNEstadoreserva("cancelado");
+            reservaRepository.save(reserva);
+            int idDisponibilidad = recursoService.getIdDisponibilidad(reserva.getFFechareserva(), reserva.getFHorainicioreserva());
+            recursoService.crearRecursoDisponibilidad(reserva.getKIdrecurso(), idDisponibilidad);
+            return "cancelado";
+        }
+        throw new BusinessException("reserva no esta en estado reservado");
     }
 
     public String calificarReserva(String idReserva, int calificacion, Long userId){
-        Optional<Reserva> reserva = reservaRepository.findById(idReserva);
-        if(reserva.isEmpty()){
-            return "reserva no existe";
+        Reserva reserva = reservaRepository.findById(idReserva)
+            .orElseThrow(() -> new ResourceNotFoundException("reserva no existe"));
+
+        if(!reserva.getKIdusuario().equals(userId)){
+            throw new UnauthorizedException("no autorizado");
         }
-        if(!reserva.get().getKIdusuario().equals(userId)){
-            return "no autorizado";
+
+        if(!reserva.getNEstadoreserva().equals("finalizado")){
+            throw new BusinessException("reserva no ha finalizado");
         }
-        if(reserva.get().getNEstadoreserva().equals("finalizado")){
-            if(reserva.get().getNCalificacion() == 0){
-                if(calificacion > 0 && calificacion <= 5){
-                    reserva.get().setNCalificacion(calificacion);
-                    reservaRepository.save(reserva.get());
-                    return "calificado";
-                }else{
-                    return "valor invalido";
-                }
-                
-            }else{
-                return "reserva ya calificada";
-            }
-            
-        }else{
-            return "reserva no ha finalizado";
+
+        if(reserva.getNCalificacion() != 0){
+            throw new BusinessException("reserva ya calificada");
         }
-        
+
+        if(calificacion <= 0 || calificacion > 5){
+            throw new BusinessException("valor invalido");
+        }
+
+        reserva.setNCalificacion(calificacion);
+        reservaRepository.save(reserva);
+        return "calificado";
     }
 }

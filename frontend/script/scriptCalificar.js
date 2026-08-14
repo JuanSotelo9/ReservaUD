@@ -27,23 +27,30 @@ document.querySelector('.botondecalificar').addEventListener('click', function (
             if(response.data=='calificado'){
                 alert(`Recurso calificado correctamente`)
             }
-            if(response.data=='reserva ya calificada'){
-                alert(`Reserva ya calificada`)
-            }
-            if(response.data=='valor invalido'){
-                alert(`Valor invalido`)
-            }
-            if(response.data=='reserva no ha finalizado'){
-                alert(`Reserva no ha finalizado`)
-            }
-            if(response.data=='reserva no existe'){
-                alert(`Reserva no existe`)
-            }
             window.location.href = "micuenta.html";
         
         })
         .catch(function (error) {
-            console.error("Error en la petición: ", error);
+            const msg = (error.response && error.response.data) ? error.response.data.message : 'error';
+            if(msg=='reserva ya calificada'){
+                alert(`Reserva ya calificada`)
+            }
+            else if(msg=='valor invalido'){
+                alert(`Valor invalido`)
+            }
+            else if(msg=='reserva no ha finalizado'){
+                alert(`Reserva no ha finalizado`)
+            }
+            else if(msg=='reserva no existe'){
+                alert(`Reserva no existe`)
+            }
+            else if(msg=='no autorizado'){
+                alert(`No autorizado`)
+            }
+            else {
+                alert(`No se pudo calificar la reserva`)
+            }
+            window.location.href = "micuenta.html";
         });
     
     
