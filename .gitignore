@@ -1,0 +1,44 @@
+# Dependencias
+node_modules/
+frontend/node_modules/
+
+# Builds
+target/
+dist/
+build/
+
+# Spring Boot
+HELP.md
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Variables de entorno y secretos
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.iml
+*.iws
+*.ipr
+.classpath
+.project
+.settings
+.factorypath
+.springBeans
+.sts4-cache
+
+# Sistemas operativos
+.DS_Store
+Thumbs.db
+*.swp
