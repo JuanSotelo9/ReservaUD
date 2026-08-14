@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./estilos/stylesReservarRecurso.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Reservar Aula</title>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="back-icon">
+                <a href="recursos.html"><i class="fas fa-arrow-left"></i></a>
+            </div>
+            <h2>Reservar Recurso</h2>
+            <div class="session-icon">
+                <a href="micuenta.html"><i class="fas fa-user"></i></a>
+            </div>
+        </header>
+        <div class="content">
+            <div class="text">
+                <h2 id="nombreProducto"> </h2>
+                <h3>Descripción:</h3>
+                <p id="descripcionProducto"></p>
+            </div>
+            <div class="search">
+                <h3>Consultar Disponibilidad</h3>
+                <label for="fecha" id="f">Fecha:</label>
+                <input type="date" id="fecha">
+                <div>
+                    <label for="horarios">Hora Inicio:</label>
+                    <select class="fielHour" id="horaInicio" disabled>
+                        <option value="">Seleccionar hora</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="horarios">Hora Final:</label>
+                    <select class="fielHour" id="horaFinal" disabled>
+                        <option value="">Seleccionar hora</option>
+                    </select>
+                </div>
+                <button id="consultar">Consultar</button>
+            </div>
+            <button id="reservar">Reservar</button>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./script/scriptReservarRecurso.js"></script>
+</body>
+</html>

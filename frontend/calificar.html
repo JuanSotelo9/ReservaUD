@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./estilos/stylesCalificar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Calificar</title>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="back-icon">
+                <a href="micuenta.html"><i class="fas fa-arrow-left"></i></a>
+            </div>
+            <h2>Calificar</h2>
+            <div class="session-icon">
+                <a href="micuenta.html"><i class="fas fa-user"></i></a>
+            </div>
+        </header>
+        <div class="content">
+            <form id="calificar-form">
+                <div class="form-group">
+                    <label for="pregunta1"><b>1.</b> Cómo describiría el estado general del recurso?</label>
+                    <div class="resp">
+                        <select id="select" name="pregunta1" required>
+                            <option value="" selected>Seleccionar</option>
+                            <option value="Pesimo">Pésimo</option>
+                            <option value="Malo">Malo</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Bueno">Bueno</option>
+                            <option value="Excelente">Excelente</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="pregunta2"><b>2.</b> Cómo calificaría su experiencia con el uso del aplicativo?</label>
+                    <div class="resp">
+                        <select id="select1" name="pregunta2" required>
+                            <option value="" selected>Seleccionar</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="pregunta3"><b>3.</b> Cómo calificaría su experiencia con el uso del recurso?</label>
+                    <div class="resp">
+                        <select id="select2" name="pregunta3" required>
+                            <option value="" selected>Seleccionar</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="pregunta4"><b>4.</b> Recomendaría el uso de este servicio a otros usuarios?</label>
+                    <div class="resp">
+                        <input type="radio" id="opcSi" name="opcRadio" value="Si" required>
+                        <label for="opcSi">Si</label>
+                        <input type="radio" id="opcNo" name="opcRadio" value="No" required>
+                        <label for="opcNo">No</label>
+                    </div>
+                    <div class="resp">
+                        <label for="pq">Por qué:</label>
+                        <div>
+                            <textarea id="textA1" class="textApq" name="pregunta4" required></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="pregunta5"><b>5.</b> Comentarios adicionales:</label>
+                    <div class="resp">
+                        <textarea id="textA2" name="pregunta5"></textarea>
+                    </div>
+                </div>
+                <a class="botondecalificar">Enviar</a>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./script/scriptCalificar.js"></script>
+</body>
+</html>

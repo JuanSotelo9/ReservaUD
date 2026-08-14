@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Henry" />
+    <meta name="description" content="Prestamos UD - Reservar Aulas y Laboratorios" />
+    <meta name="keywords" content="Prestamos UD, Reservar Aulas y Laboratorios" />
+    <meta property="og:image" content="./images/previewAula1.webp" />
+    <link rel="stylesheet" href="estilos/estilo.css" />
+    
+    <title>Mi Cuenta - PrestamosUD</title>
+</head>
+
+<body>
+    <div class="off-screen-menu">
+        <!-- <div class="search-bar">
+            <input type="search" placeholder="Buscar" name="" id="" class="search" />
+            <a href="recursos.html" type="submit">Buscar</a>
+        </div> -->
+        <ul>
+            <li><a href="homeUser.html">Inicio</a></li>
+            <li><a href="micuenta.html">Mi Cuenta</a></li>
+            <!-- <li><a href="#">Contactanos</a></li> -->
+        </ul>
+        <a href="index.html" type="submit" class="btnLogOut">Cerrar Sesión</a>
+    </div>
+
+    <nav class="navbar">
+        <h2 class="inicio">
+            <a href="homeUser.html">
+                Prestamos UD
+            </a>
+        </h2>
+
+        <!-- <div class="search-bar">
+            <input type="search" placeholder="Buscar" name="" id="" class="search" />
+            <a href="recursos.html" type="submit">Buscar</a>
+        </div> -->
+
+        <button type="button" class="btnUser">Mi cuenta</button>
+
+        <div class="ham-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+    </nav>
+    <main class="container">
+        <div class="selector_container">
+            <form class="formulario" id="formmicuenta">
+                <fieldset>
+                    <legend>Información de la cuenta</legend>
+                    <div class="contenedor-campos">
+    
+                        <div class="campo">
+                            <label>Nombre Completo:</label>
+                            <input class="input-text" type="text" readonly id="nombreCompleto">
+                        </div>
+                        <div class="campo">
+                            <label>Usuario:</label>
+                            <input class="input-text" type="text" readonly id="usuario">
+                        </div>
+                        <div class="campo">
+                            <label>Correo:</label>
+                            <input class="input-text" type="text" readonly id="correo">
+                        </div>
+                        <div class="alinear-derecha">
+                            <a href="index.html" id="cerrarsesionsiosi" type="submit" class="btnLogOut" >Cerrar Sesión</a>
+                         </div>
+                     </div>
+                </fieldset>
+            </form>
+            
+            <div class="formulario" id="historialmicuenta">
+                <fieldset class="fieldset-container">
+                    <legend id="legendintento">Historial de Reservas</legend>
+                </fieldset>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="th-id">ID Reserva</th>
+                                <th class="th-nb">Nombre del recurso</th>
+                                <th class="th-nr">Fecha Reserva</th>
+                                <th class="th-hi">Hora inicial</th>
+                                <th class="th-hf">Hora final</th>
+                                <th class="th-ds">Estado</th>
+                                <th class="th-op">Calificación</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-body">
+                            <!-- Los resultados se insertarán aquí dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script src="script/scriptMicuenta.js"></script>
+</body>
+
+</html>

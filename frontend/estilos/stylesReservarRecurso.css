@@ -1,0 +1,106 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+.container {
+    width: 80%;
+    max-width: 500px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+header .back-icon a, 
+header .session-icon a {
+    font-size: 24px;
+    color: #333;
+    text-decoration: none;
+}
+header .back-icon a:hover,
+header .session-icon a:hover {
+    color: #1f92b8;
+}
+header .buscar input {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+header h2 {
+    font-size: 26px;
+    margin: 1%;
+}
+.content {
+    text-align: center;
+}
+.content h2 {
+    color: #1f92b8;
+}
+.text h3 {
+    text-align: left;
+    margin-bottom: 1%;
+    padding-left: 2%;
+    padding-right: 2%;
+}
+.text h2 {
+    margin-top: 10px;
+}
+.text p {
+    font-size: 16px;
+    text-align: left;
+    margin-top: 0%;
+    padding-left: 2%;
+    padding-right: 2%;
+}
+.text {
+    padding: 3px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+}
+.search {
+    margin-top: 30px;
+    margin-bottom: 45px;
+}
+#fecha,
+.fielHour {
+    width: 40%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    
+}
+.content button {
+    padding: 5px 10px;
+    border: none;
+    transition: background-color 0.3s ease;
+    background-color: #afafaf;
+    color: #ffffff;
+    border-radius: 4px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+#reservar {
+    width: 30%;
+    margin-bottom: 10px;
+}
+.fielHour {
+    width: 42.5%;
+}
+.content button:hover {
+    background-color: #1f92b8;
+}
+label {
+    padding-right: 3px;
+    font-size: 16px;
+}

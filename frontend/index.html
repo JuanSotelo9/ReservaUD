@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrestamosUD</title>
+    <link rel="stylesheet" href="estilos/estilo.css">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+
+    <!-- izquierda con el logo de la universidad -->
+    <div class="contenedor">
+        <div class="izquierda">
+            <div class="logo">
+
+            </div>
+        </div>
+        <div id="derecha" class="derecha">
+            
+        </div>
+
+        <!-- Botón de iniciar sesión activa la animacion de movimiento -->
+        <button id="btnInicioSesion" class="botonInicioSesion">Iniciar sesión</button>
+    </div>
+
+    <!-- Botones que dan paso a sus respectivos modal's -->
+    <button id="Iniciar" class="boton Iniciar">Iniciar sesión</button>
+    <button id="Registrar" class="boton Registrar">Registrarse</button>
+    <button id="regresar" class="boton regresar">Regresar</button>
+    <div id="MisionVision" class="MisionVision"> 
+        <div id="TituloModalPresentacion" class="TituloModalPresentacion">Universidad Distrital Francisco Jose de Caldas</div>
+        <div id="ContenedorPoliticadecalidad" class="ContenedorPoliticadecalidad">
+            <div id="Politicadecalidad" class="Politicadecalidad"><strong>Misión:</strong> <br> La Universidad Distrital Francisco José de Caldas es un espacio social y una organización institucional, ente autónomo del orden distrital, que tiene entre sus finalidades la formación de profesionales especializados y de ciudadanos activos; la producción y reproducción del conocimiento científico, además de la innovación tecnológica y la creación artística. Impulsa el diálogo de saberes y promueve una pedagogía, capaz de animar la reflexión y la curiosidad de los estudiantes; además, fomenta un espíritu crítico en la búsqueda de verdades abiertas; en la promoción de la ciencia y la creación; asimismo, de la ciudadanía y la democracia; y alienta la deliberación, fundada en la argumentación y en el diálogo razonado.</div>
+        </div>
+    </div>
+    
+    <!-- Modal que contiene el formulario de registro -->
+    <section id="modal" class="modal">
+        <div class="moda_container">
+            <h2 class="modal_title">Registro
+                <a href="index.html" class="modal_x">X</a>
+            </h2>
+            <div class="modal_figure">
+                <section class="form-register">
+                    <div>
+                        <input class="controls" type="text" name="Cedula" id="Cedula" placeholder="Ingrese su cedula">
+                        <span class="error-message" id="cedula-error" style="color: red;"></span>
+                    </div>
+                    <div>
+                        <input class="controls" type="text" name="nombres" id="Nombre" placeholder="Ingrese su nombres">
+                        <span class="error-message" id="nombres-error" style="color: red;"></span>
+                    </div>
+                    <div>
+                        <input class="controls" type="text" name="Apellidos" id="Apellido" placeholder="Ingrese su Apellidos">
+                        <span class="error-message" id="apellidos-error" style="color: red;"></span>
+                    </div>
+                    <div>
+                        <input class="controls" type="text" name="Usuario" id="Usuario" placeholder="Ingrese su Usuario">
+                        <span class="error-message" id="usuario-error" style="color: red;"></span>
+                    </div>
+                    <div>
+                        <input class="controls" type="email" name="email" id="Email" placeholder="Ingrese su Email">
+                        <span class="error-message" id="email-error" style="color: red;"></span>
+                    </div>
+                    <div>
+                        <input class="controls" type="password" name="Contraseña" id="Contraseña" placeholder="Ingrese su Contraseña">
+                        <span class="error-message" id="contrasena-error" style="color: red;"></span>
+                    </div>
+                    <p>Estoy de acuerdo con <a>Terminos y condiciones</a></p>
+                    <div id="registration-success-message" style="display: none; color: green;">...</div>
+                    <a class="modal_close">Registrar</a>
+                </section>
+            </div>
+
+            <!-- <a href="#header" class="modal_close" >Registrarse</a> -->
+        </div>
+    </section>
+
+    <!-- Modal que contiene el formulario de Inicio de sesión -->
+    <section id="modal2" class="modal2">
+        <div class="moda_container2">
+            <h2 class="modal_title2">Ingresar
+                <a href="#header2" class="modal_x2">X</a>
+            </h2>
+            <div class="modal_figure2">
+                <section class="form-register2">
+                    <input class="controls2" type="text" name="Usuario" id="Usuario1" placeholder="Ingrese su Usuario">
+                    <input class="controls2" type="password" name="Contraseña" id="Contraseña1" placeholder="Ingrese su Contraseña">
+                    <a href="#modal" id="registrarseLink" class="mandarRegistro">Registrarse</a>
+                    <div id="login-success-message" style="display: none; color: green;">...
+                    </div>
+                </section>
+            </div>
+            <a href="#header2" class="modal_close2">Entrar</a>
+        </div>
+    </section>
+    
+    <!-- Script -->
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <script src="script/script.js"></script>
+</body>
+</html>

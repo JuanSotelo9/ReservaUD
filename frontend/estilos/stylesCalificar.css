@@ -1,0 +1,85 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+.container {
+    width: 80%;
+    max-width: 500px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.content {
+    padding: 20px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+}
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+header .back-icon a, 
+header .session-icon a {
+    font-size: 24px;
+    color: #333;
+    text-decoration: none;
+}
+header .back-icon a:hover,
+header .session-icon a:hover {
+    color: #1f92b8;
+}
+header h2 {
+    font-size: 30px;
+    color: #1f92b8;
+    margin: 15px;
+}
+.content button {
+    width: 15%;
+    font-size: 15px;
+    padding: 8px;
+    border: none;
+    transition: background-color 0.3s ease;
+    background-color: #afafaf;
+    color: #ffffff;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 41%;
+    margin-top: 10px;
+}
+.content button:hover {
+    background-color: #1f92b8;
+}
+.form-group {
+    margin-bottom: 15px;
+}
+.resp {
+    margin-left: 25px;
+    margin-top: 5px;
+}
+#select, #select1, #select2, #textA1, #textA2{
+    width: 30%;
+    padding: 5px;
+    border: 1px solid #1f92b8;
+    border-radius: 4px;
+}
+#textA1, #textA2 {
+    width: 90%;
+    font-size: 15px;
+    resize: none;
+}
+.textApq {
+    margin-top: 4px;
+}
+#opcSi {
+    margin-left: 25%;
+}
+#opcNo {
+    margin-left: 22%;
+}

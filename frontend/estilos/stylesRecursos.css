@@ -1,0 +1,123 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+.container {
+    width: 80%;
+    max-width: 800px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+header .home-icon a, 
+header .session-icon a {
+    font-size: 24px;
+    color: #333;
+    text-decoration: none;
+}
+header .home-icon a:hover,
+header .session-icon a:hover {
+    color: #1f92b8;
+}
+header .buscar {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    justify-content: center;
+}
+header .buscar input {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+header .buscar button {
+    padding: 5px 10px;
+    border: none;
+    transition: background-color 0.3s ease;
+    background-color: #afafaf;
+    color: #ffffff;
+    border-radius: 4px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+header .buscar #allBtn {
+    margin-left: 20px;
+}
+
+header .buscar button:hover {
+    background-color: #1f92b8;
+}
+h1 {
+    font-size: 24px;
+    color: #000000;
+    text-align: center;
+    margin-bottom: 5px;
+    margin-top: 30px;
+}
+table {
+    width: 100%;
+    margin-top: 15px;
+    border-collapse: separate; /* Separar los bordes de las celdas */
+    border-spacing: 0; /* Eliminar el espacio entre celdas */
+    border: 1px solid #ddd; /* Añadir borde exterior a la tabla */
+    border-radius: 10px; /* Bordes redondeados */
+    overflow: hidden; /* Asegurar que las esquinas redondeadas se apliquen correctamente */
+}
+table thead {
+    text-align: center;
+}
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+table thead th {
+    background-color: #1f92b8;
+    color: #ffffff;
+}
+table tr:hover {
+    background-color: #e2e2e2;
+}
+table button {
+    padding: 5px 10px;
+    border: none;
+    background-color: #afafaf;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+table button:hover {
+    background-color: #1f92b8;
+}
+.table-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+.th-id {
+    width: 10%;
+}
+.th-nr {
+    width: 30%;
+}
+.th-ds {
+    width: 50%;
+}
+.th-cl {
+    width: 5%;
+}
+.th-op {
+    width: 5%;
+}
