@@ -11,15 +11,13 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "tipo_de_recurso")
-public class TipoRecurso {
+@AllArgsConstructor
+@Table(name = "caracteristicas")
+public class Caracteristica {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int kIdtiporecurso;
-    String nNombretiporecurso;
-    String nDescripciontiporecurso;
-    String nImagen;
+    int kIdcaracteristicas;
+    String nDescripcioncaracteristica;
 }

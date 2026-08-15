@@ -17,15 +17,18 @@ import com.api.backend.dto.request.DisponibilidadRequest;
 import com.api.backend.dto.response.RecursoResponse;
 import com.api.backend.exception.BusinessException;
 import com.api.backend.exception.ResourceNotFoundException;
+import com.api.backend.model.Caracteristica;
 import com.api.backend.model.Disponibilidad;
 import com.api.backend.model.Poseer;
 import com.api.backend.model.PoseerId;
 import com.api.backend.model.Recurso;
 import com.api.backend.model.TipoRecurso;
+import com.api.backend.repository.CaracteristicaRepository;
 import com.api.backend.repository.DisponibilidadRepository;
 import com.api.backend.repository.PoseerRepository;
 import com.api.backend.repository.RecursoRepository;
 import com.api.backend.repository.ReservaRepository;
+import com.api.backend.repository.SerCaracterisadoRepository;
 import com.api.backend.repository.TipoRecursoRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -39,6 +42,8 @@ public class RecursoService {
     private final PoseerRepository poseerRepository;
     private final ReservaRepository reservaRepository;
     private final TipoRecursoRepository tipoRecursoRepository;
+    private final CaracteristicaRepository caracteristicaRepository;
+    private final SerCaracterisadoRepository serCaracterisadoRepository;
 
     private static final Map<String, String> SORT_FIELDS = Map.of(
         "id", "kIdrecurso",
@@ -80,13 +85,19 @@ public class RecursoService {
         if(tipoRecurso.isPresent()){
             nombreTipoRecurso = tipoRecurso.get().getNNombretiporecurso();
         }
+        List<String> caracteristicas = caracteristicaRepository
+            .findAllById(serCaracterisadoRepository.findCaracteristicaIdsByRecurso(recurso.getKIdrecurso()))
+            .stream()
+            .map(Caracteristica::getNDescripcioncaracteristica)
+            .toList();
         return new RecursoResponse(
             recurso.getKIdrecurso(),
             recurso.getNNombrerecurso(),
             recurso.getNDescripcionrecurso(),
             recurso.getKIdtiporecurso(),
             nombreTipoRecurso,
-            calificacionPromedio(recurso.getKIdrecurso())
+            calificacionPromedio(recurso.getKIdrecurso()),
+            caracteristicas
         );
     }
 

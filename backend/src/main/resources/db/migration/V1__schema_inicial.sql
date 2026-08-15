@@ -1,47 +1,17 @@
-/* ---------------------------------------------------- */
-/*  Esquema de Base de Datos - ReservaUD                 */
-/*  Nota: la fuente de verdad ahora es Flyway            */
-/*  (backend/src/main/resources/db/migration/). Este     */
-/*  script es un reset manual del esquema final.         */
-/* ---------------------------------------------------- */
-
-SET FOREIGN_KEY_CHECKS=0
-; 
-/* Drop Tables */
-
-DROP TABLE IF EXISTS `caracteristicas` CASCADE
-;
-
-DROP TABLE IF EXISTS `disponibilidad` CASCADE
-;
-
-DROP TABLE IF EXISTS `poseer` CASCADE
-;
-
-DROP TABLE IF EXISTS `recurso` CASCADE
-;
-
-DROP TABLE IF EXISTS `reserva` CASCADE
-;
-
-DROP TABLE IF EXISTS `ser_caracterisado` CASCADE
-;
-
-DROP TABLE IF EXISTS `tipo_de_recurso` CASCADE
-;
-
-DROP TABLE IF EXISTS `usuario` CASCADE
-;
-
-/* Create Tables */
+-- ============================================================
+-- V1: Esquema inicial
+-- Corregido: se eliminan las tablas huerfanas sin entidades JPA
+-- (administrador, gestionar, horario_laboral, tener).
+-- Se conservan caracteristicas + ser_caracterisado como funcionalidad.
+-- El rol del usuario (n_role) se agrega en V2.
+-- ============================================================
 
 CREATE TABLE `caracteristicas`
 (
 	`k_idcaracteristicas` INT NOT NULL AUTO_INCREMENT,
 	`n_descripcioncaracteristica` VARCHAR(255) NOT NULL,
-	CONSTRAINT `PK_Caracteristicas` PRIMARY KEY (`k_idcaracteristicas` ASC)
+	CONSTRAINT `PK_Caracteristicas` PRIMARY KEY (`k_idcaracteristicas`)
 )
-
 ;
 
 CREATE TABLE `tipo_de_recurso`
@@ -49,10 +19,9 @@ CREATE TABLE `tipo_de_recurso`
 	`k_idtiporecurso` INT NOT NULL AUTO_INCREMENT,
 	`n_nombretiporecurso` VARCHAR(50) NOT NULL,
 	`n_descripciontiporecurso` VARCHAR(255) NOT NULL,
-    `n_imagen` VARCHAR(250) NOT NULL,
-	CONSTRAINT `PK_Tipo_De_Recurso` PRIMARY KEY (`k_idtiporecurso` ASC)
+	`n_imagen` VARCHAR(250) NOT NULL,
+	CONSTRAINT `PK_Tipo_De_Recurso` PRIMARY KEY (`k_idtiporecurso`)
 )
-
 ;
 
 CREATE TABLE `recurso`
@@ -61,9 +30,8 @@ CREATE TABLE `recurso`
 	`n_nombrerecurso` VARCHAR(50) NOT NULL,
 	`n_descripcionrecurso` VARCHAR(255) NOT NULL,
 	`k_idtiporecurso` INT NOT NULL,
-	CONSTRAINT `PK_Recurso` PRIMARY KEY (`k_idrecurso` ASC)
+	CONSTRAINT `PK_Recurso` PRIMARY KEY (`k_idrecurso`)
 )
-
 ;
 
 CREATE TABLE `usuario`
@@ -73,11 +41,9 @@ CREATE TABLE `usuario`
 	`n_usuario` VARCHAR(50) NOT NULL,
 	`n_email` VARCHAR(50) NOT NULL,
 	`n_password` VARCHAR(255) NOT NULL,
-	`n_role` VARCHAR(20) NOT NULL DEFAULT 'ROLE_USER',
-	CONSTRAINT `PK_Usuario` PRIMARY KEY (`k_idusuario` ASC)
+	CONSTRAINT `PK_Usuario` PRIMARY KEY (`k_idusuario`)
 )
 COMMENT = 'persona que interactua con la aplicacion'
-
 ;
 
 CREATE TABLE `disponibilidad`
@@ -86,9 +52,8 @@ CREATE TABLE `disponibilidad`
 	`f_horainiciodisponibilidad` TIME NOT NULL,
 	`f_horafinaldisponibilidad` TIME NOT NULL,
 	`f_diadisponibilidad` DATE NOT NULL,
-	CONSTRAINT `PK_Disponibilidad` PRIMARY KEY (`k_iddisponibilidad` ASC)
+	CONSTRAINT `PK_Disponibilidad` PRIMARY KEY (`k_iddisponibilidad`)
 )
-
 ;
 
 CREATE TABLE `poseer`
@@ -97,7 +62,6 @@ CREATE TABLE `poseer`
 	`k_iddisponibilidad` INT NOT NULL,
 	CONSTRAINT `PK_Poseer` PRIMARY KEY (`k_idrecurso` ASC, `k_iddisponibilidad` ASC)
 )
-
 ;
 
 CREATE TABLE `ser_caracterisado`
@@ -106,7 +70,6 @@ CREATE TABLE `ser_caracterisado`
 	`k_idcaracteristicas` INT NOT NULL,
 	CONSTRAINT `PK_Ser_Caracterisado` PRIMARY KEY (`k_idrecurso` ASC, `k_idcaracteristicas` ASC)
 )
-
 ;
 
 CREATE TABLE `reserva`
@@ -117,14 +80,13 @@ CREATE TABLE `reserva`
 	`f_fechareserva` DATE NOT NULL,
 	`n_estadoreserva` VARCHAR(15) NOT NULL,
 	`k_idusuario` BIGINT NOT NULL,
-    `k_idrecurso` INT NOT NULL,
-    `n_calificacion` INT NOT NULL,
-	CONSTRAINT `PK_Reserva` PRIMARY KEY (`k_idreserva` ASC)
+	`k_idrecurso` INT NOT NULL,
+	`n_calificacion` INT NOT NULL,
+	CONSTRAINT `PK_Reserva` PRIMARY KEY (`k_idreserva`)
 )
-
 ;
 
-/* Create Foreign Key Constraints */
+/* Foreign Key Constraints */
 
 ALTER TABLE `recurso` 
  ADD CONSTRAINT `FK_Recurso_Tipo_De_Recurso`
@@ -160,6 +122,3 @@ ALTER TABLE `reserva`
 	ADD CONSTRAINT `FK_Reserva_Recurso`
 		FOREIGN KEY (`k_idrecurso`) REFERENCES `recurso` (`k_idrecurso`) ON DELETE Restrict ON UPDATE Restrict
 ;
-
-SET FOREIGN_KEY_CHECKS=1
-; 

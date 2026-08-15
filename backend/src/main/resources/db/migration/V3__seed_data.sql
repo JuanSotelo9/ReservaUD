@@ -1,36 +1,22 @@
-/* ============================================================ */
-/*  DATOS DE PRUEBA - ReservaUD                                 */
-/*  Genera datos para TODAS las tablas del esquema.             */
-/*  Es re-ejecutable: limpia las tablas antes de insertar.      */
-/*  Las fechas de disponibilidad y reservas son relativas a la  */
-/*  fecha actual (CURDATE) para que siempre se puedan probar    */
-/*  los endpoints de reserva.                                   */
-/* ============================================================ */
+-- ============================================================
+-- V3: Datos de prueba
+-- Fechas de disponibilidad y reservas relativas a CURDATE()
+-- para que siempre haya disponibilidad futura al probar.
+-- ============================================================
 
-SET FOREIGN_KEY_CHECKS=0;
-TRUNCATE TABLE `reserva`;
-TRUNCATE TABLE `ser_caracterisado`;
-TRUNCATE TABLE `poseer`;
-TRUNCATE TABLE `caracteristicas`;
-TRUNCATE TABLE `disponibilidad`;
-TRUNCATE TABLE `recurso`;
-TRUNCATE TABLE `tipo_de_recurso`;
-TRUNCATE TABLE `usuario`;
-SET FOREIGN_KEY_CHECKS=1;
-
-/* ----------------------- USUARIO ----------------------- */
+/* USUARIO */
 INSERT INTO `usuario` (`k_idusuario`, `n_nombre`, `n_usuario`, `n_email`, `n_password`, `n_role`) VALUES ('1', 'Administrador', 'admin', 'admin@reservasud.com', '$2b$12$qTH7t58rzjilNz9OSrtPq.7XX3O4cFti47kwmNmyYH66E.7IIA5rG', 'ROLE_ADMIN');
 INSERT INTO `usuario` (`k_idusuario`, `n_nombre`, `n_usuario`, `n_email`, `n_password`, `n_role`) VALUES ('2', 'Usuario Prueba', 'user', 'user@reservasud.com', '$2b$12$vJfEMB0fUZX1jDS1vEruu.cv4zx1kAb27gfNmjk9T6wjLJaV2upAi', 'ROLE_USER');
 INSERT INTO `usuario` (`k_idusuario`, `n_nombre`, `n_usuario`, `n_email`, `n_password`, `n_role`) VALUES ('3', 'Maria Gomez', 'maria.gomez', 'maria.gomez@reservasud.com', '$2b$12$vJfEMB0fUZX1jDS1vEruu.cv4zx1kAb27gfNmjk9T6wjLJaV2upAi', 'ROLE_USER');
 
-/* -------------------- TIPO_DE_RECURSO -------------------- */
+/* TIPO_DE_RECURSO */
 INSERT INTO `tipo_de_recurso` (`k_idtiporecurso`, `n_nombretiporecurso`, `n_descripciontiporecurso`, `n_imagen`) VALUES ('1', 'Laboratorio', 'Laboratorio', 'https://www.ucentral.edu.co/sites/default/files/inline-images/recorrido-laboratorios-universidad-central.jpg');
 INSERT INTO `tipo_de_recurso` (`k_idtiporecurso`, `n_nombretiporecurso`, `n_descripciontiporecurso`, `n_imagen`) VALUES ('2', 'Aula', 'Aula', 'https://st3.depositphotos.com/29384342/33698/i/450/depositphotos_336981024-stock-photo-empty-modern-classrom-teacher-desk.jpg');
 INSERT INTO `tipo_de_recurso` (`k_idtiporecurso`, `n_nombretiporecurso`, `n_descripciontiporecurso`, `n_imagen`) VALUES ('3', 'Tablet', 'Tablet', 'https://cdn.computerhoy.com/sites/navi.axelspringer.es/public/media/image/2021/07/lenovo-tab-p11-pro-2424527.jpg');
 INSERT INTO `tipo_de_recurso` (`k_idtiporecurso`, `n_nombretiporecurso`, `n_descripciontiporecurso`, `n_imagen`) VALUES ('4', 'Portatil', 'Portatil', 'https://megacomputer.com.co/wp-content/uploads/2023/11/PORTATIL-HP-14-EM0014LA-4.jpg');
 INSERT INTO `tipo_de_recurso` (`k_idtiporecurso`, `n_nombretiporecurso`, `n_descripciontiporecurso`, `n_imagen`) VALUES ('5', 'Video Beam', 'Video Beam', 'https://mainframeltda.com/wp-content/uploads/2019/04/Que_es_un_proyector_de_video-1100x825.jpg');
 
-/* ------------------------ RECURSO ------------------------ */
+/* RECURSO */
 INSERT INTO `recurso` (`k_idrecurso`, `n_nombrerecurso`, `n_descripcionrecurso`, `k_idtiporecurso`) VALUES ('1', 'Laboratorio 501', 'Laboratorio de fisica', '1');
 INSERT INTO `recurso` (`k_idrecurso`, `n_nombrerecurso`, `n_descripcionrecurso`, `k_idtiporecurso`) VALUES ('2', 'Laboratorio de control', 'Laboratorio de control', '1');
 INSERT INTO `recurso` (`k_idrecurso`, `n_nombrerecurso`, `n_descripcionrecurso`, `k_idtiporecurso`) VALUES ('3', 'Salon 204', 'Salon para clases', '2');
@@ -40,20 +26,19 @@ INSERT INTO `recurso` (`k_idrecurso`, `n_nombrerecurso`, `n_descripcionrecurso`,
 INSERT INTO `recurso` (`k_idrecurso`, `n_nombrerecurso`, `n_descripcionrecurso`, `k_idtiporecurso`) VALUES ('7', 'Portatil HP Pavilion', 'Portatil para prestamo', '4');
 INSERT INTO `recurso` (`k_idrecurso`, `n_nombrerecurso`, `n_descripcionrecurso`, `k_idtiporecurso`) VALUES ('8', 'Video Beam Epson', 'Video beam para salones', '5');
 
-/* ---------------------- CARACTERISTICAS ---------------------- */
+/* CARACTERISTICAS */
 INSERT INTO `caracteristicas` (`k_idcaracteristicas`, `n_descripcioncaracteristica`) VALUES ('1', 'Tiene aire acondicionado');
 INSERT INTO `caracteristicas` (`k_idcaracteristicas`, `n_descripcioncaracteristica`) VALUES ('2', 'Tiene video beam');
 INSERT INTO `caracteristicas` (`k_idcaracteristicas`, `n_descripcioncaracteristica`) VALUES ('3', 'Capacidad para 40 personas');
 INSERT INTO `caracteristicas` (`k_idcaracteristicas`, `n_descripcioncaracteristica`) VALUES ('4', 'Tiene toma corrientes');
 
-/* ---------------------- SER_CARACTERISADO ---------------------- */
+/* SER_CARACTERISADO */
 INSERT INTO `ser_caracterisado` (`k_idrecurso`, `k_idcaracteristicas`) VALUES ('1', '1');
 INSERT INTO `ser_caracterisado` (`k_idrecurso`, `k_idcaracteristicas`) VALUES ('1', '2');
 INSERT INTO `ser_caracterisado` (`k_idrecurso`, `k_idcaracteristicas`) VALUES ('3', '3');
 INSERT INTO `ser_caracterisado` (`k_idrecurso`, `k_idcaracteristicas`) VALUES ('6', '4');
 
-/* ---------------------- DISPONIBILIDAD ---------------------- */
-/* Slots de MANANA (06:00 - 20:00) */
+/* DISPONIBILIDAD - manana (06:00 - 20:00) */
 INSERT INTO `disponibilidad` (`k_iddisponibilidad`, `f_horainiciodisponibilidad`, `f_horafinaldisponibilidad`, `f_diadisponibilidad`) VALUES ('1', '06:00:00', '07:00:00', DATE_ADD(CURDATE(), INTERVAL 1 DAY));
 INSERT INTO `disponibilidad` (`k_iddisponibilidad`, `f_horainiciodisponibilidad`, `f_horafinaldisponibilidad`, `f_diadisponibilidad`) VALUES ('2', '07:00:00', '08:00:00', DATE_ADD(CURDATE(), INTERVAL 1 DAY));
 INSERT INTO `disponibilidad` (`k_iddisponibilidad`, `f_horainiciodisponibilidad`, `f_horafinaldisponibilidad`, `f_diadisponibilidad`) VALUES ('3', '08:00:00', '09:00:00', DATE_ADD(CURDATE(), INTERVAL 1 DAY));
@@ -68,7 +53,8 @@ INSERT INTO `disponibilidad` (`k_iddisponibilidad`, `f_horainiciodisponibilidad`
 INSERT INTO `disponibilidad` (`k_iddisponibilidad`, `f_horainiciodisponibilidad`, `f_horafinaldisponibilidad`, `f_diadisponibilidad`) VALUES ('12', '17:00:00', '18:00:00', DATE_ADD(CURDATE(), INTERVAL 1 DAY));
 INSERT INTO `disponibilidad` (`k_iddisponibilidad`, `f_horainiciodisponibilidad`, `f_horafinaldisponibilidad`, `f_diadisponibilidad`) VALUES ('13', '18:00:00', '19:00:00', DATE_ADD(CURDATE(), INTERVAL 1 DAY));
 INSERT INTO `disponibilidad` (`k_iddisponibilidad`, `f_horainiciodisponibilidad`, `f_horafinaldisponibilidad`, `f_diadisponibilidad`) VALUES ('14', '19:00:00', '20:00:00', DATE_ADD(CURDATE(), INTERVAL 1 DAY));
-/* Slots de PASADO MAÑANA (06:00 - 20:00) */
+
+/* DISPONIBILIDAD - pasado manana (06:00 - 20:00) */
 INSERT INTO `disponibilidad` (`k_iddisponibilidad`, `f_horainiciodisponibilidad`, `f_horafinaldisponibilidad`, `f_diadisponibilidad`) VALUES ('15', '06:00:00', '07:00:00', DATE_ADD(CURDATE(), INTERVAL 2 DAY));
 INSERT INTO `disponibilidad` (`k_iddisponibilidad`, `f_horainiciodisponibilidad`, `f_horafinaldisponibilidad`, `f_diadisponibilidad`) VALUES ('16', '07:00:00', '08:00:00', DATE_ADD(CURDATE(), INTERVAL 2 DAY));
 INSERT INTO `disponibilidad` (`k_iddisponibilidad`, `f_horainiciodisponibilidad`, `f_horafinaldisponibilidad`, `f_diadisponibilidad`) VALUES ('17', '08:00:00', '09:00:00', DATE_ADD(CURDATE(), INTERVAL 2 DAY));
@@ -84,10 +70,8 @@ INSERT INTO `disponibilidad` (`k_iddisponibilidad`, `f_horainiciodisponibilidad`
 INSERT INTO `disponibilidad` (`k_iddisponibilidad`, `f_horainiciodisponibilidad`, `f_horafinaldisponibilidad`, `f_diadisponibilidad`) VALUES ('27', '18:00:00', '19:00:00', DATE_ADD(CURDATE(), INTERVAL 2 DAY));
 INSERT INTO `disponibilidad` (`k_iddisponibilidad`, `f_horainiciodisponibilidad`, `f_horafinaldisponibilidad`, `f_diadisponibilidad`) VALUES ('28', '19:00:00', '20:00:00', DATE_ADD(CURDATE(), INTERVAL 2 DAY));
 
-/* -------------------------- POSEER -------------------------- */
-/* Todos los recursos disponibles en todos los slots.           */
-/* NOTA: el recurso 8 en el slot 11 (manana 16:00-17:00) NO se  */
-/* inserta porque esa reserva ya existe (R-001).                */
+/* POSEER - todos los recursos en todos los slots.
+   Se omiten los slots ya reservados: recurso 8 slot 11 (R-001) y recurso 6 slot 6 (R-005). */
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('1', '1');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('2', '1');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('3', '1');
@@ -133,7 +117,6 @@ INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('2', '6');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('3', '6');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('4', '6');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('5', '6');
-/* Recurso 6 en slot 6 (manana 11:00-12:00) reservado (R-005) */
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('7', '6');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('8', '6');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('1', '7');
@@ -152,7 +135,6 @@ INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('5', '8');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('6', '8');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('7', '8');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('8', '8');
-/* Slot 9 (manana 14:00-15:00): recurso 1 libre para probar POST /reservas */
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('1', '9');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('2', '9');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('3', '9');
@@ -176,7 +158,6 @@ INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('4', '11');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('5', '11');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('6', '11');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('7', '11');
-/* Recurso 8 en slot 11 (manana 16:00-17:00) reservado (R-001) */
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('1', '12');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('2', '12');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('3', '12');
@@ -201,7 +182,6 @@ INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('5', '14');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('6', '14');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('7', '14');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('8', '14');
-/* Slots de PASADO MAÑANA (15-28) disponibles para todos los recursos */
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('1', '15');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('2', '15');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('3', '15');
@@ -315,14 +295,9 @@ INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('6', '28');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('7', '28');
 INSERT INTO `poseer` (`k_idrecurso`, `k_iddisponibilidad`) VALUES ('8', '28');
 
-/* ------------------------- RESERVA ------------------------- */
-/* R-001: reservada para manana -> probar PATCH /reservas/{id}/cancelar */
+/* RESERVA */
 INSERT INTO `reserva` (`k_idreserva`, `f_horainicioreserva`, `f_horafinalreserva`, `f_fechareserva`, `n_estadoreserva`, `k_idusuario`, `k_idrecurso`, `n_calificacion`) VALUES ('R-001', '16:00:00', '17:00:00', DATE_ADD(CURDATE(), INTERVAL 1 DAY), 'reservado', '2', '8', 0);
-/* R-002: finalizada sin calificar -> probar PATCH /reservas/{id}/calificar */
 INSERT INTO `reserva` (`k_idreserva`, `f_horainicioreserva`, `f_horafinalreserva`, `f_fechareserva`, `n_estadoreserva`, `k_idusuario`, `k_idrecurso`, `n_calificacion`) VALUES ('R-002', '10:00:00', '11:00:00', DATE_SUB(CURDATE(), INTERVAL 5 DAY), 'finalizado', '2', '2', 0);
-/* R-003: cancelada */
 INSERT INTO `reserva` (`k_idreserva`, `f_horainicioreserva`, `f_horafinalreserva`, `f_fechareserva`, `n_estadoreserva`, `k_idusuario`, `k_idrecurso`, `n_calificacion`) VALUES ('R-003', '09:00:00', '10:00:00', DATE_SUB(CURDATE(), INTERVAL 3 DAY), 'cancelado', '2', '3', 0);
-/* R-004: finalizada y calificada */
 INSERT INTO `reserva` (`k_idreserva`, `f_horainicioreserva`, `f_horafinalreserva`, `f_fechareserva`, `n_estadoreserva`, `k_idusuario`, `k_idrecurso`, `n_calificacion`) VALUES ('R-004', '16:00:00', '17:00:00', DATE_SUB(CURDATE(), INTERVAL 2 DAY), 'finalizado', '3', '4', 5);
-/* R-005: reservada de la usuaria Maria (id 3) para manana */
 INSERT INTO `reserva` (`k_idreserva`, `f_horainicioreserva`, `f_horafinalreserva`, `f_fechareserva`, `n_estadoreserva`, `k_idusuario`, `k_idrecurso`, `n_calificacion`) VALUES ('R-005', '11:00:00', '12:00:00', DATE_ADD(CURDATE(), INTERVAL 1 DAY), 'reservado', '3', '6', 0);
