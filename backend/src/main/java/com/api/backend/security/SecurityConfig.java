@@ -30,6 +30,11 @@ public class SecurityConfig {
 			.authorizeHttpRequests(authRequest ->
 				authRequest
 					.requestMatchers("/auth/**").permitAll()
+					.requestMatchers("/swagger-ui.html").permitAll()
+					.requestMatchers("/swagger-ui/**").permitAll()
+					.requestMatchers("/v3/api-docs/**").permitAll()
+					.requestMatchers("/swagger-resources/**").permitAll()
+					.requestMatchers("/webjars/**").permitAll()
 					.requestMatchers("/usuarios/**").hasRole("USER")
 					.requestMatchers("/reservas/**").hasRole("USER")
 					.requestMatchers("/admin/**").hasRole("ADMIN")

@@ -1,243 +1,215 @@
-# ReservaUD — Sistema de Reserva de Recursos Universitarios
+# 🎓 ReservaUD — Sistema de Reserva de Recursos Universitarios
 
-Aplicación web fullstack para la reserva de recursos de una universidad (laboratorios, aulas, tabletas, portátiles, video beams). Los usuarios pueden registrarse, iniciar sesión, consultar la disponibilidad de los recursos, realizar reservas por franjas horarias, cancelarlas y calificar el servicio.
+Aplicación web fullstack para la reserva de recursos académicos (laboratorios, aulas, tabletas, portátiles y video beams) de una universidad. Permite registrar usuarios, autenticarse con JWT, consultar la disponibilidad por franjas horarias, reservar, cancelar y calificar el servicio, todo con roles (`USER` / `ADMIN`), una API REST documentada con Swagger, migraciones de base de datos con Flyway y despliegue reproducible con Docker Compose.
 
----
-
-## Tecnologías
-
-### Backend
-
-| Tecnología | Uso |
-|------------|-----|
-| Java 17 | Lenguaje principal |
-| Spring Boot 3.2.5 | Framework |
-| Spring Data JPA | Persistencia / ORM |
-| Spring Security + JWT (jjwt 0.11.5) | Autenticación y autorización (roles `ROLE_USER` / `ROLE_ADMIN` persistidos en BD) |
-| Flyway | Migraciones de base de datos versionadas |
-| springdoc-openapi (Swagger) | Documentación interactiva de la API |
-| MySQL | Base de datos |
-| Lombok | Reducción de boilerplate |
-| java-dotenv | Lectura de variables de entorno desde `.env` |
-| Maven | Build y dependencias |
-
-### Frontend
-
-| Tecnología | Uso |
-|------------|-----|
-| HTML5 / CSS3 | Estructura y estilos |
-| JavaScript (vanilla) | Lógica por página |
-| Axios | Cliente HTTP |
-| Font Awesome | Iconos |
+<p align="center">
+  <img src="https://img.shields.io/badge/Java-17-orange?style=flat-square&logo=openjdk&logoColor=white" alt="Java 17" />
+  <img src="https://img.shields.io/badge/Spring%20Boot-3.2.5-6DB33F?style=flat-square&logo=spring&logoColor=white" alt="Spring Boot" />
+  <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React 19" />
+  <img src="https://img.shields.io/badge/TypeScript-6-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/MySQL-8-4479A1?style=flat-square&logo=mysql&logoColor=white" alt="MySQL 8" />
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker" />
+  <img src="https://img.shields.io/badge/JWT-auth-000000?style=flat-square&logo=jsonwebtokens&logoColor=white" alt="JWT" />
+  <img src="https://img.shields.io/badge/Flyway-CC0200?style=flat-square" alt="Flyway" />
+  <img src="https://img.shields.io/badge/React%20Query-5-FF4154?style=flat-square&logo=reactquery&logoColor=white" alt="React Query" />
+  <img src="https://img.shields.io/badge/Vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white" alt="Vitest" />
+</p>
 
 ---
 
-## Funcionalidades
+## 🧱 Stack tecnológico
 
-- Registro de usuarios con validación de datos (cédula, nombre, usuario, email, contraseña).
-- Inicio de sesión con generación de token JWT (el rol del usuario viaja como *claim* del token).
-- Roles: `/usuarios/**` y `/reservas/**` requieren `ROLE_USER`; `/admin/**` requiere `ROLE_ADMIN`.
-- Consulta paginada de tipos de recurso y recursos (con orden por columna), incluyendo calificación promedio y características de cada recurso.
-- Búsqueda y filtrado de recursos por tipo.
-- Consulta de disponibilidad por fecha y franja horaria.
-- Reserva de recursos (consume las franjas disponibles).
-- Historial de reservas del usuario con su estado (`reservado`, `en progreso`, `finalizado`, `cancelado`).
-- Cancelación de reservas (solo en estado `reservado`, con más de 2 horas de antelación y solo las propias).
-- Calificación de reservas finalizadas (escala 1–5, solo las propias).
-- Transición automática de estados mediante tarea programada (`@Scheduled` cada hora) y depuración de disponibilidades vencidas.
-- Manejo centralizado de errores (`@RestControllerAdvice`) con respuestas JSON `{ message, status }`.
-- Capa de DTOs: los controllers nunca exponen entidades JPA.
-- Migraciones de esquema y datos de prueba automáticas con Flyway.
-- Swagger UI en `/swagger-ui.html`.
+| Capa | Tecnologías |
+|------|-------------|
+| **Frontend** | React 19, TypeScript, Vite, React Router, React Query, React Hook Form + Zod, Axios |
+| **Backend** | Java 17, Spring Boot 3.2.5, Spring Security, Spring Data JPA, Flyway, springdoc-openapi |
+| **Base de datos** | MySQL 8 |
+| **Calidad** | JUnit 5, Mockito, Testcontainers, Vitest, Testing Library, oxlint |
+| **Infraestructura** | Docker, Docker Compose, Nginx |
 
 ---
 
-## Estructura del proyecto
+## 🏗️ Arquitectura
 
 ```
-ReservaUD/
-├── backend/                  # API REST (Spring Boot)
-│   └── src/main/
-│       ├── java/com/api/backend/
-│       │   ├── config/           # CORS, beans de autenticación
-│       │   ├── controller/       # Endpoints REST (solo DTOs)
-│       │   ├── dto/              # Capa de DTOs
-│       │   │   ├── request/      #   Body de las peticiones
-│       │   │   └── response/     #   Respuestas de la API
-│       │   ├── exception/        # Excepciones de negocio + @ControllerAdvice
-│       │   ├── model/            # Entidades JPA
-│       │   ├── repository/       # Repositorios Spring Data JPA
-│       │   ├── security/         # Filtro JWT y configuración de seguridad
-│       │   ├── service/          # Lógica de negocio
-│       │   └── sheduled/         # Tareas programadas
-│       └── resources/
-│           ├── db/migration/     # Migraciones Flyway (V1, V2, V3)
-│           └── application.properties
-├── Base de Datos/            # Scripts SQL manuales (fallback)
-│   ├── BaseDatos.sql
-│   └── Datos de prueba.sql
-├── frontend/                 # Frontend (HTML/CSS/JS)
-│   ├── index.html            # Login / registro
-│   ├── homeUser.html         # Dashboard de tipos de recurso
-│   ├── recursos.html         # Listado y búsqueda de recursos
-│   ├── reservarRecurso.html  # Formulario de reserva
-│   ├── micuenta.html         # Perfil e historial de reservas
-│   ├── calificar.html        # Formulario de calificación
-│   ├── estilos/              # Hojas de estilo
-│   └── script/               # Lógica JavaScript por página
-└── postman/                  # Colección Postman para probar la API
+                        ┌──────────────────────────────┐
+                        │         Navegador            │
+                        │  React + TypeScript (Vite)   │
+                        └──────────────┬───────────────┘
+                                       │ HTTP/JSON (JWT Bearer)
+                                       ▼
+                        ┌──────────────────────────────┐
+                        │  Frontend en producción      │
+                        │  Nginx (servidor estático)   │
+                        │  :80                         │
+                        └──────────────┬───────────────┘
+                                       │
+                                       ▼
+        ┌───────────────────────────────────────────────┐
+        │              Backend — Spring Boot            │
+        │  Controller → Service → Repository → Entity   │
+        │  Spring Security + JWT  ·  DTOs  ·  Flyway     │
+        │  @ControllerAdvice (errores JSON)  ·  :8080    │
+        └──────────────────────────┬────────────────────┘
+                                   │ JPA
+                                   ▼
+                        ┌──────────────────────────────┐
+                        │         MySQL 8 :3306         │
+                        │  Migraciones Flyway (V1-V3)   │
+                        └──────────────────────────────┘
 ```
 
----
-
-## Base de datos
-
-Base de datos MySQL. El esquema y los datos se aplican automáticamente con **Flyway** al arrancar el backend (`backend/src/main/resources/db/migration/`):
-
-| Migración | Contenido |
-|-----------|-----------|
-| `V1__schema_inicial.sql` | Esquema inicial (8 tablas) |
-| `V2__agregar_role_usuario.sql` | Columna `n_role` en `usuario` |
-| `V3__seed_data.sql` | Datos de prueba con fechas relativas a `CURDATE()` |
-
-Tablas:
-
-| Tabla | Descripción |
-|-------|-------------|
-| `usuario` | Usuarios del sistema con rol (`ROLE_USER` / `ROLE_ADMIN`) |
-| `tipo_de_recurso` | Categorías de recurso (laboratorio, aula, tablet, etc.) |
-| `recurso` | Recursos concretos disponibles |
-| `caracteristicas` | Catálogo de características |
-| `ser_caracterisado` | Relación recurso ↔ característica |
-| `disponibilidad` | Franjas horarias disponibles |
-| `poseer` | Relación recurso ↔ disponibilidad |
-| `reserva` | Reservas realizadas por los usuarios |
-
-> Los scripts `Base de Datos/BaseDatos.sql` y `Base de Datos/Datos de prueba.sql` se mantienen como **fallback manual**; la fuente de verdad es Flyway.
+Flujo de una reserva: el usuario consulta disponibilidad (`POST /recursos/disponibilidad`), crea la reserva (`POST /reservas`), y una tarea programada (`@Scheduled`) transiciona los estados automáticamente (`reservado → en progreso → finalizado`). El token JWT incluye el rol como *claim*, por lo que la autorización de cada request es **stateless**.
 
 ---
 
-## API REST
+## ✨ Funcionalidades
 
-Formato de error uniforme (400/403/404): `{ "message": "...", "status": <código> }`.
+- Registro e inicio de sesión con validación (React Hook Form + Zod) y token JWT.
+- Roles persistidos en BD (`ROLE_USER` / `ROLE_ADMIN`) verificados en cada request.
+- Listado paginado y ordenable de recursos con calificación promedio y características.
+- Búsqueda y filtrado por tipo de recurso.
+- Consulta de disponibilidad por fecha y franja horaria (slots de 1 hora).
+- Reserva, cancelación (con antelación mínima de 2 h) y calificación (1–5) de reservas propias.
+- Historial de reservas con estados y acciones contextuales.
+- Manejo uniforme de errores HTTP (400/401/403/404) con cuerpo JSON.
+- Documentación interactiva de la API con Swagger.
+- Migraciones de esquema y *seed* automáticos con Flyway.
+- Tests de integración (Testcontainers) y unitarios (Mockito) en el backend; tests de componentes (Vitest + Testing Library) en el frontend.
 
-Los endpoints de listado (`GET /recursos`, `GET /tipos`) son **paginados**: `?page=0&size=5&sort=nombre,asc` (los campos de orden usan nombres del DTO).
+---
+
+## 📸 Capturas de pantalla
+
+| Inicio | Recursos |
+|--------|----------|
+| ![Home](docs/screenshots/home.png) | ![Recursos](docs/screenshots/recursos.png) |
+
+| Reserva | Mi cuenta |
+|---------|-----------|
+| ![Reservar](docs/screenshots/reservar.png) | ![Mi cuenta](docs/screenshots/micuenta.png) |
+
+---
+
+## 🚀 Cómo ejecutar el proyecto
+
+> Requisito: **Docker** con integración WSL activada.
+
+```bash
+# 1. Configurar variables de entorno
+cp .env.example .env
+
+# 2. Construir y levantar MySQL + backend + frontend
+docker compose up --build
+
+# 3. Abrir la aplicación
+#    Frontend:  http://localhost
+#    API:       http://localhost:8080
+#    Swagger:   http://localhost:8080/swagger-ui.html
+```
+
+Para detener: `docker compose down` (agrega `-v` para borrar también los datos).
+
+### Desarrollo local (sin Docker)
+
+```bash
+# Backend (MySQL local + Flyway automático)
+cd backend && cp .env.example .env && ./mvnw spring-boot:run
+
+# Frontend
+cd frontend && npm install && npm run dev   # http://localhost:5173
+```
+
+**Usuarios sembrados** por el seed de Flyway: `admin / 123456` (ROLE_ADMIN) y `user / 123456` (ROLE_USER).
+
+---
+
+## 📡 API REST
+
+Documentación interactiva en **Swagger**: `http://localhost:8080/swagger-ui.html` (spec en `/v3/api-docs`).
+
+Formato de error uniforme: `{ "message": "...", "status": <código> }`.
 
 | Método | Endpoint | Descripción | Auth |
 |--------|----------|-------------|------|
-| `POST` | `/auth/login-user` | Iniciar sesión y obtener token JWT | No |
-| `POST` | `/auth/register` | Registrar un nuevo usuario | No |
-| `GET` | `/recursos` | Listar recursos (paginado), con calificación y características | Bearer |
-| `GET` | `/recursos/{id}` | Obtener un recurso | Bearer |
-| `GET` | `/recursos/tipo/{id}` | Listar recursos por tipo | Bearer |
-| `POST` | `/recursos/disponibilidad` | Consultar disponibilidad de un recurso | Bearer |
-| `GET` | `/tipos` | Listar tipos de recurso (paginado) | Bearer |
-| `GET` | `/tipos/{id}` | Obtener un tipo de recurso | Bearer |
-| `GET` | `/usuarios/{id}` | Obtener el usuario autenticado y su historial (solo el propio) | USER |
-| `POST` | `/reservas` | Reservar un recurso | USER |
-| `PATCH` | `/reservas/{id}/cancelar` | Cancelar una reserva propia | USER |
-| `PATCH` | `/reservas/{id}/calificar` | Calificar una reserva propia finalizada | USER |
+| `POST` | `/auth/register` | Registrar usuario | — |
+| `POST` | `/auth/login-user` | Login → token JWT | — |
+| `GET` | `/recursos` | Recursos paginados (`?page&size&sort`) | Bearer |
+| `GET` | `/recursos/{id}` | Detalle de recurso | Bearer |
+| `GET` | `/recursos/tipo/{id}` | Recursos por tipo | Bearer |
+| `POST` | `/recursos/disponibilidad` | Consultar disponibilidad | Bearer |
+| `GET` | `/tipos` | Tipos de recurso (paginado) | Bearer |
+| `GET` | `/tipos/{id}` | Detalle de tipo | Bearer |
+| `GET` | `/usuarios/{id}` | Perfil e historial (solo propio) | `ROLE_USER` |
+| `POST` | `/reservas` | Crear reserva | `ROLE_USER` |
+| `PATCH` | `/reservas/{id}/cancelar` | Cancelar reserva propia | `ROLE_USER` |
+| `PATCH` | `/reservas/{id}/calificar` | Calificar reserva finalizada | `ROLE_USER` |
 
-Documentación Swagger: `http://localhost:8080/swagger-ui.html` (spec en `/v3/api-docs`).
-
-### Ejemplo de respuesta de `GET /recursos`
-
-```json
-{
-  "content": [
-    {
-      "id": 1,
-      "nombre": "Laboratorio 501",
-      "descripcion": "Laboratorio de fisica",
-      "idTipoRecurso": 1,
-      "nombreTipoRecurso": "Laboratorio",
-      "calificacionPromedio": 0.0,
-      "caracteristicas": ["Tiene aire acondicionado", "Tiene video beam"]
-    }
-  ],
-  "totalElements": 8,
-  "totalPages": 2,
-  ...
-}
-```
+Colección de pruebas incluida: `postman/ReservaUD.postman_collection.json` (importable en Postman).
 
 ---
 
-## Requisitos previos
-
-- **JDK 17** o superior
-- **Maven** (o usar el wrapper `./mvnw`)
-- **MySQL 8** corriendo en `localhost:3306`
-- **Node.js** (opcional, para servir el frontend con Live Server)
-
----
-
-## Cómo ejecutar el proyecto
-
-### 1. Base de datos
-
-Crear la base de datos (Flyway crea las tablas y los datos de prueba al arrancar):
-
-```sql
-CREATE DATABASE reservasUD;
-```
-
-### 2. Variables de entorno
-
-Copiar `backend/.env.example` a `backend/.env` y ajustar las credenciales:
-
-```env
-DB_URL=jdbc:mysql://localhost:3306/reservasUD
-DB_USERNAME=root
-DB_PASSWORD=tu_password
-JWT_SECRET=genera_un_secreto_base64_de_al_menos_256_bits
-CORS_ORIGINS=http://localhost:5173,http://localhost:3000
-```
-
-`CORS_ORIGINS` debe incluir el origen donde se sirve el frontend.
-
-### 3. Backend
+## 🧪 Testing
 
 ```bash
-cd backend
-./mvnw spring-boot:run
+# Frontend (Vitest + Testing Library)
+cd frontend && npm test
+
+# Backend (requiere Docker para Testcontainers)
+cd backend && ./mvnw test
 ```
 
-Al arrancar, Flyway aplica las migraciones (`V1` → `V2` → `V3`). La API queda en `http://localhost:8080`.
-
-> Si ya existía una BD con datos previos sin historial de Flyway, bórrala y vuelve a crearla para una instalación limpia:
-> `DROP DATABASE reservasUD; CREATE DATABASE reservasUD;`
-
-### 4. Frontend
-
-El frontend es estático; se sirve con un servidor local (por ejemplo, la extensión **Live Server** de VS Code):
-
-```bash
-cd frontend
-npx live-server --port=5501
-```
-
-Abrir `http://127.0.0.1:5501`. El origen usado debe estar incluido en `CORS_ORIGINS`.
+- **Backend integración** (`AuthControllerTest`): Testcontainers levanta un MySQL real y verifica registro/login JWT y códigos de error.
+- **Backend unitarios** (`ReservaServiceTest`): cancelación con antelación exacta, restauración de todos los slots, calificación y autorización.
+- **Frontend** (`LoginPage`, `RecursosPage`, `StarRating`): validación de formularios, lista vacía y comportamiento de componentes.
 
 ---
 
-## Pruebas con Postman
+## 🧠 Decisiones técnicas
 
-La colección `postman/ReservaUD.postman_collection.json` incluye pruebas de todos los endpoints, casos de éxito y de error (400, 401, 403, 404).
-
-Flujo sugerido:
-1. **Importar** la colección en Postman (File → Import).
-2. Ejecutar **"1. Login usuario"** (`user` / `123456`) — guarda automáticamente `{{token}}` y `{{userId}}`.
-3. Consultar disponibilidad y crear reservas (la variable `{{fecha}}` se calcula como "mañana" automáticamente; el seed deja el recurso 1 a las 14:00 disponible).
-4. **"9. Obtener usuario"** captura `{{reservaCancelarId}}` y `{{reservaCalificarId}}` para cancelar/calificar.
-
-Usuarios sembrados por `V3__seed_data.sql`: `admin` / `123456` (ROLE_ADMIN) y `user` / `123456` (ROLE_USER).
+- **JWT + Spring Security (stateless)**: autenticación sin sesiones en el servidor; el rol viaja como *claim* del token y se verifica en cada request, lo que permite escalar horizontalmente y desacoplar frontend/backend.
+- **Roles persistidos en BD**: se almacenan en `usuario.n_role` en lugar de hardcodearlos en runtime, evitando que "nadie pueda ser admin".
+- **Capa de DTOs**: los controllers nunca exponen entidades JPA. Define un contrato estable para la API, evita filtrar campos internos y desacopla la persistencia de la interfaz.
+- **`LocalTime`/`LocalDate` en lugar de `java.sql.*`**: elimina bugs de zona horaria en la comparación de franjas horarias contra la BD.
+- **Flyway**: esquema y datos de prueba versionados y reproducibles; el *seed* usa fechas relativas a `CURDATE()` para tener disponibilidad siempre futura.
+- **React Query**: cachea listados, expone estados de carga/error y permite invalidar consultas tras una mutación (p. ej. al cancelar una reserva se refresca el historial).
+- **React Hook Form + Zod**: validación de formularios declarativa y tipada, con el mismo esquema como fuente de verdad.
+- **`@ControllerAdvice`**: errores de negocio tipados que se traducen en respuestas JSON uniformes (400/403/404) en lugar de strings sueltos.
+- **Testcontainers**: tests de integración contra un MySQL real y desechable, sin depender del entorno local.
+- **Docker Compose**: entorno reproducible de un solo comando para revisores y reclutadores.
 
 ---
 
-## Roadmap / mejoras pendientes
+## 📁 Estructura del proyecto
 
-- Migración del frontend de JavaScript vanilla a **React + TypeScript**.
-- Cobertura de tests unitarios y de integración.
-- Dockerización del stack completo (backend + frontend + MySQL).
-- Endpoints de administración de recursos y tipos.
+```
+ReservaUD/
+├── backend/                      # API REST (Spring Boot)
+│   ├── src/main/java/com/api/backend/
+│   │   ├── controller/           # Endpoints REST (solo DTOs)
+│   │   ├── service/              # Lógica de negocio
+│   │   ├── repository/           # Spring Data JPA
+│   │   ├── dto/request|response/ # Capa de DTOs
+│   │   ├── exception/            # Excepciones + @ControllerAdvice
+│   │   ├── security/             # Filtro JWT y configuración
+│   │   ├── config/               # CORS y beans
+│   │   ├── model/                # Entidades JPA
+│   │   └── sheduled/             # Tareas programadas
+│   └── src/main/resources/db/migration/   # Flyway (V1-V3)
+├── frontend/                     # SPA (React + Vite + TS)
+│   └── src/
+│       ├── api/                  # Cliente Axios + interceptor JWT
+│       ├── components/           # UI y layout
+│       ├── pages/                # Vistas
+│       ├── hooks/                # useAuth, useRecursos, useReservas
+│       ├── contexts/             # AuthContext
+│       ├── types/                # Tipos compartidos
+│       └── utils/                # Formatters y constantes
+├── postman/                      # Colección de pruebas de la API
+├── docker-compose.yml            # MySQL + backend + frontend
+└── docs/screenshots/             # Capturas para el README
+```
+
+---
+
