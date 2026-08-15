@@ -3,7 +3,7 @@ import { useAuth } from '../../hooks/useAuth'
 import { Button } from '../ui/Button'
 
 export function Navbar() {
-  const { isAuthenticated, logout } = useAuth()
+  const { isAuthenticated, role, logout } = useAuth()
   const navigate = useNavigate()
 
   const handleLogout = () => {
@@ -21,6 +21,7 @@ export function Navbar() {
           <>
             <NavLink to="/recursos">Recursos</NavLink>
             <NavLink to="/cuenta">Mi cuenta</NavLink>
+            {role === 'ROLE_ADMIN' && <NavLink to="/admin">Admin</NavLink>}
             <Button variant="secondary" onClick={handleLogout}>
               Cerrar sesión
             </Button>

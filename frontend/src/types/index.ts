@@ -53,3 +53,53 @@ export interface ErrorResponse {
   message: string
   status: number
 }
+
+export interface RecursoRequest {
+  nombre: string
+  descripcion: string
+  idTipoRecurso: number
+}
+
+export interface TipoRecursoRequest {
+  nombre: string
+  descripcion: string
+  imagen: string
+}
+
+export interface TopRecurso {
+  idRecurso: number
+  nombre: string
+  totalReservas: number
+}
+
+export interface ReservasPorDia {
+  dia: string
+  total: number
+}
+
+export interface ReservasPorHora {
+  hora: number
+  total: number
+}
+
+export interface DashboardResponse {
+  totalRecursos: number
+  totalTipos: number
+  totalUsuarios: number
+  totalReservas: number
+  reservasReservado: number
+  reservasEnProgreso: number
+  reservasFinalizadas: number
+  reservasCanceladas: number
+  recursosMasReservados: TopRecurso[]
+  reservasPorDia: ReservasPorDia[]
+  reservasPorHora: ReservasPorHora[]
+}
+
+export interface DisponibilidadResponse {
+  id: number
+  dia: string
+  horaInicio: string
+  horaFinal: string
+  recursos: string[]
+}

@@ -56,3 +56,15 @@ export function errorMessage(error: unknown): string {
   }
   return 'Error inesperado'
 }
+
+export function decodificarRol(token: string | null): string | null {
+  if (!token) return null
+  try {
+    const payload = token.split('.')[1]
+    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/')
+    const json = JSON.parse(atob(base64)) as { role?: string }
+    return json.role ?? null
+  } catch {
+    return null
+  }
+}

@@ -2,12 +2,21 @@ import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
 import type { Page, Recurso, TipoRecurso } from '../types'
 
-export function useRecursos(page: number, size: number) {
+export interface RecursosFiltros {
+  page: number
+  size: number
+  q?: string
+  tipo?: number
+  disponible?: string
+  sort?: string
+}
+
+export function useRecursos(filtros: RecursosFiltros) {
   return useQuery({
-    queryKey: ['recursos', page, size],
+    queryKey: ['recursos', filtros],
     queryFn: async () => {
       const { data } = await api.get<Page<Recurso>>('/recursos', {
-        params: { page, size },
+        params: filtros,
       })
       return data
     },

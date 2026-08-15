@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.api.backend.dto.request.ReservaRequest;
@@ -54,6 +56,10 @@ public class ReservaService {
             .stream()
             .map(this::toResponse)
             .toList();
+    }
+
+    public Page<ReservaResponse> getAllReservas(Pageable pageable){
+        return reservaRepository.findAll(pageable).map(this::toResponse);
     }
 
     public ReservaResponse toResponse(Reserva reserva){

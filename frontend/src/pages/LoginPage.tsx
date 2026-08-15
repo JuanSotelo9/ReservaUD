@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import api from '../api/client'
 import { useAuth } from '../hooks/useAuth'
+import { decodificarRol } from '../utils/formatters'
 import { Button } from '../components/ui/Button'
 import { Toast } from '../components/ui/Toast'
 import type { AuthResponse } from '../types'
@@ -34,7 +35,8 @@ export function LoginPage() {
       const { data } = await api.post<AuthResponse>('/auth/login-user', values)
       if (data.id !== null) {
         login(data.response, data.id)
-        navigate('/recursos')
+        const rol = decodificarRol(data.response)
+        navigate(rol === 'ROLE_ADMIN' ? '/admin' : '/recursos')
       }
     } catch {
       setError('Usuario o contraseña incorrectos')

@@ -374,3 +374,102 @@ h3 {
 .profile p {
   margin: 4px 0;
 }
+
+/* Admin */
+.admin-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.admin-nav a {
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  font-weight: 500;
+}
+
+.admin-nav a.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.stat-label {
+  color: var(--muted);
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.page-header h1 {
+  margin: 0;
+}
+
+.acciones {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-crear-disp {
+  max-width: 460px;
+  margin: 0 0 20px;
+}
+
+textarea {
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.resumen-disp {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.resumen-disp h4 {
+  margin: 0 0 8px;
+}
+
+.fila-dia {
+  margin: 6px 0;
+}
+
+.hint-disp {
+  font-size: 0.9rem;
+  margin: 0 0 8px;
+}

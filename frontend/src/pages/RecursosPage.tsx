@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecursos, useTipos } from '../hooks/useRecursos'
 import { PAGE_SIZE } from '../utils/constants'
@@ -11,23 +11,31 @@ import type { Recurso } from '../types'
 export function RecursosPage() {
   const [page, setPage] = useState(0)
   const [busqueda, setBusqueda] = useState('')
-  const [tipoFiltro, setTipoFiltro] = useState(0)
+  const [q, setQ] = useState('')
+  const [tipo, setTipo] = useState(0)
+  const [disponible, setDisponible] = useState('')
+  const [orden, setOrden] = useState('')
 
-  const { data, isLoading, isError } = useRecursos(page, PAGE_SIZE)
+  useEffect(() => {
+    const timer = setTimeout(() => setQ(busqueda), 400)
+    return () => clearTimeout(timer)
+  }, [busqueda])
+
+  useEffect(() => {
+    setPage(0)
+  }, [q, tipo, disponible, orden])
+
+  const { data, isLoading, isError } = useRecursos({
+    page,
+    size: PAGE_SIZE,
+    q: q || undefined,
+    tipo: tipo || undefined,
+    disponible: disponible || undefined,
+    sort: orden || undefined,
+  })
   const { data: tipos } = useTipos()
 
-  const recursos = useMemo(() => {
-    if (!data) return []
-    const texto = busqueda.trim().toLowerCase()
-    return data.content.filter((r) => {
-      const coincideBusqueda =
-        !texto || r.nombre.toLowerCase().includes(texto)
-      const coincideTipo = tipoFiltro === 0 || r.idTipoRecurso === tipoFiltro
-      return coincideBusqueda && coincideTipo
-    })
-  }, [data, busqueda, tipoFiltro])
-
-  const columns: Column<Recurso>[] = [
+  const columnas: Column<Recurso>[] = [
     { key: 'id', header: 'ID', render: (r) => r.id },
     { key: 'nombre', header: 'Nombre', render: (r) => r.nombre },
     { key: 'tipo', header: 'Tipo', render: (r) => r.nombreTipoRecurso },
@@ -61,24 +69,28 @@ export function RecursosPage() {
           type="text"
           placeholder="Buscar recurso…"
           value={busqueda}
-          onChange={(e) => {
-            setBusqueda(e.target.value)
-            setPage(0)
-          }}
+          onChange={(e) => setBusqueda(e.target.value)}
         />
-        <select
-          value={tipoFiltro}
-          onChange={(e) => {
-            setTipoFiltro(Number(e.target.value))
-            setPage(0)
-          }}
-        >
+        <select value={tipo} onChange={(e) => setTipo(Number(e.target.value))}>
           <option value={0}>Todos los tipos</option>
           {(tipos ?? []).map((t) => (
             <option key={t.id} value={t.id}>
               {t.nombre}
             </option>
           ))}
+        </select>
+        <input
+          type="date"
+          title="Disponible el día"
+          value={disponible}
+          onChange={(e) => setDisponible(e.target.value)}
+        />
+        <select value={orden} onChange={(e) => setOrden(e.target.value)}>
+          <option value="">Sin orden</option>
+          <option value="calificacionPromedio,desc">Mejor calificación</option>
+          <option value="calificacionPromedio,asc">Peor calificación</option>
+          <option value="nombre,asc">Nombre A–Z</option>
+          <option value="nombre,desc">Nombre Z–A</option>
         </select>
       </div>
 
@@ -89,8 +101,8 @@ export function RecursosPage() {
           <p className="empty-message">Error al cargar los recursos.</p>
         ) : (
           <DataTable
-            columns={columns}
-            data={recursos}
+            columns={columnas}
+            data={data?.content ?? []}
             keyField={(r) => r.id}
             emptyMessage="No hay recursos que coincidan."
           />

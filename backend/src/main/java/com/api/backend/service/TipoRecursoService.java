@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.api.backend.dto.request.TipoRecursoRequest;
 import com.api.backend.dto.response.TipoRecursoResponse;
 import com.api.backend.exception.BusinessException;
 import com.api.backend.exception.ResourceNotFoundException;
@@ -60,20 +61,30 @@ public class TipoRecursoService {
         );
     }
 
-    public boolean saveTipoRecurso(TipoRecurso tipoRecurso){
-        try {
-            tipoRecursoRepository.save(tipoRecurso);
-            return true;
-        } catch (Exception e) {
-            throw new BusinessException("no se pudo guardar el tipo de recurso");
-        }
+    public TipoRecursoResponse crearTipoRecurso(TipoRecursoRequest request){
+        TipoRecurso tipoRecurso = new TipoRecurso();
+        tipoRecurso.setNNombretiporecurso(request.nombre());
+        tipoRecurso.setNDescripciontiporecurso(request.descripcion());
+        tipoRecurso.setNImagen(request.imagen());
+        return toResponse(tipoRecursoRepository.save(tipoRecurso));
     }
 
-    public boolean deleteTipoRecurso(TipoRecurso tipoRecurso){
-        if(!tipoRecursoRepository.existsById(tipoRecurso.getKIdtiporecurso())){
-            throw new ResourceNotFoundException("tipo de recurso no existe");
+    public TipoRecursoResponse actualizarTipoRecurso(int id, TipoRecursoRequest request){
+        TipoRecurso tipoRecurso = tipoRecursoRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("tipo de recurso no existe"));
+        tipoRecurso.setNNombretiporecurso(request.nombre());
+        tipoRecurso.setNDescripciontiporecurso(request.descripcion());
+        tipoRecurso.setNImagen(request.imagen());
+        return toResponse(tipoRecursoRepository.save(tipoRecurso));
+    }
+
+    public void eliminarTipoRecurso(int id){
+        TipoRecurso tipoRecurso = tipoRecursoRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("tipo de recurso no existe"));
+        try {
+            tipoRecursoRepository.delete(tipoRecurso);
+        } catch (Exception e) {
+            throw new BusinessException("no se pudo eliminar: el tipo tiene recursos asociados");
         }
-        tipoRecursoRepository.delete(tipoRecurso);
-        return true;
     }
 }
